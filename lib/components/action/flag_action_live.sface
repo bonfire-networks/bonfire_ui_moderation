@@ -23,7 +23,7 @@
     <:action_btns>
       {#if id(@flagged) ||
           (current_user(@__context__) &&
-             Flags.flagged?(current_user(@__context__), @object) |> debug("SLOOOOOT flagged??"))}
+             Flags.flagged?(current_user(@__context__), @object))}
         <button
           data-role="object_already_flagged"
           phx-click="close"
@@ -40,7 +40,7 @@
           phx-value-id={id(@object)}
           phx-value-type={@object_type}
           type="button"
-          class="normal-case rounded-full btn btn-sm btn-warning"
+          class="normal-case"
         >
           {e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}
         </button>
