@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Social.Repo.Migrations.InitPointers  do
+defmodule Bonfire.UI.Social.Repo.Migrations.InitPointers do
   @moduledoc false
   use Ecto.Migration
   import Needle.Migration
