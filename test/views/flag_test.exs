@@ -99,7 +99,7 @@ defmodule Bonfire.Social.Moderation.FlagTest do
     conn = conn(user: admin, account: account)
     {:ok, view5, _html} = live(conn, "/settings/instance/flags")
     # I should see the flag on the feed
-    open_browser(view5)
+    # open_browser(view5)
     assert has_element?(view5, "div[data-role=flagged_by]")
   end
 
