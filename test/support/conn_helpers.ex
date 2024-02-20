@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Posts.Test.ConnHelpers do
+defmodule Bonfire.UI.Moderation.Test.ConnHelpers do
   # import ExUnit.Assertions
   # import Plug.Conn
   # import Phoenix.ConnTest

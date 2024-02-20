@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Posts.Test.FakeHelpers do
+defmodule Bonfire.UI.Moderation.Test.FakeHelpers do
   def post_attrs(n),
     do: %{
       post_content: %{
