@@ -178,14 +178,14 @@
   <span class="sr-only">{l("Unflag")}</span>
 </button>
 
-{!-- <LiveRedirect 
+{!-- <LinkLive 
       to={@permalink}
     >
       <button
         class="normal-case btn btn-sm">
         {l "View"}
       </button>
-    </LiveRedirect> --}
+    </LinkLive> --}
 {!-- <Bonfire.UI.Social.Activity.MoreActionsLive
       object={@object} 
       object_type={@object_type} 
