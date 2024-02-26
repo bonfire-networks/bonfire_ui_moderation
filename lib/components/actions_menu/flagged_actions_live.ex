@@ -3,7 +3,6 @@ defmodule Bonfire.UI.Moderation.FlaggedActionsLive do
   # alias Bonfire.UI.Common.OpenModalLive
   # import Bonfire.UI.Social.Integration
 
-  # def handle_event(action, attrs, socket), do: Bonfire.UI.Common.LiveHandlers.handle_event(action, attrs, socket, __MODULE__)
   prop activity, :any, default: nil
   prop object, :any
   prop object_type, :any
