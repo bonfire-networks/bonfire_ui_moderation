@@ -17,7 +17,7 @@
     <:open_btn>
       <div class="flex items-center w-full gap-2 text-sm text-base-content/70">
         <#Icon :if={!@hide_icon} solid="Flag" class="w-4 h-4 shrink-0" />
-        <span class="truncate ellipsis">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
+        <span class="truncate ellipsis">{e(@label, l("Flag the author"))}</span>
       </div>
     </:open_btn>
     <:action_btns>
