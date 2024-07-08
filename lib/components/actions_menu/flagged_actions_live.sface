@@ -28,7 +28,7 @@
         }}
         prompt={l("Message the flagger")}
         icon="heroicons-solid:mail"
-        class="!flex items-center gap-2 text-sm text-base-content/70"
+        class="!flex items-center gap-2 text-sm"
       />
     </li>
 
@@ -48,7 +48,7 @@
           }}
           prompt={l("Message the original author")}
           icon="heroicons-solid:mail"
-          class="!flex items-center gap-2 text-sm text-base-content/70"
+          class="!flex items-center gap-2 text-sm"
         />
       </div>
     </li>
@@ -130,7 +130,7 @@
         scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
         label={l("the original author")}
         type="block"
-        class="flex items-center w-full gap-2 text-sm text-base-content/70"
+        class="flex items-center w-full gap-2 text-sm"
         with_icon
       />
     </li>
@@ -144,7 +144,7 @@
         scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
         label={l("the flagger")}
         type="block"
-        class="flex items-center w-full gap-2 text-sm text-base-content/70"
+        class="flex items-center w-full gap-2 text-sm"
         with_icon
       />
     </li>
