@@ -2,10 +2,10 @@ defmodule Bonfire.Social.Flags.LiveHandler do
   use Bonfire.UI.Common.Web, :live_handler
 
   # flag in LV
-  def handle_event("flag", %{"id" => id} = params, socket) do
+  def handle_event("flag", %{"object_id" => id} = params, socket) do
     # debug(socket)
     with {:ok, current_user} <- current_user_or_remote_interaction(socket, l("flag"), id),
-         {:ok, _flag} <- Bonfire.Social.Flags.flag(current_user, id) do
+         {:ok, _flag} <- Bonfire.Social.Flags.flag(current_user, id, comment: params["comment"]) do
       Bonfire.UI.Common.OpenModalLive.close()
 
       {
