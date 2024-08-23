@@ -17,7 +17,7 @@
 
       <textarea
         name="comment"
-        class="textarea w-full mt-2"
+        class="textarea textarea-bordered textarea-sm w-full mt-4 h-[10rem] leading-[1.5]"
         placeholder={l(
           "Please write a small explanation for the moderators (e.g. what boundaries were broken, how it is affecting you or others, and what you're requesting to repair that...)"
         )}

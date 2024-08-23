@@ -1,14 +1,11 @@
 <div aria-haspopup="true" class="dropdown dropdown-end feed_activity relative">
-  <button
-    tabindex="0"
-    class="border-warning/30 btn btn-outline btn-warning rounded-full normal-case btn-sm"
-  >
+  <button tabindex="0" class="btn btn-neutral btn-sm">
     <#Icon iconify="game-icons:heart-plus" class="w-5 h-5 stroke-1" />
     {l("Mediate")}
   </button>
   <ul
     tabindex="0"
-    class="!block w-72 mt-2 z-[910] menu-sm relative shadow menu dropdown-content text-base-content bg-base-200 rounded-lg dropdown_actions"
+    class="!block w-72 mt-2 z-[910] dropdown-content p-0.5 menu shadow-xl bg-base-100 border rounded border-base-content/20 dropdown_actions"
     role="menu"
     aria-orientation="vertical"
     aria-labelledby="more-menu"
@@ -106,10 +103,7 @@
 </div>
 
 <div aria-haspopup="true" class="dropdown dropdown-end feed_activity relative">
-  <button
-    tabindex="0"
-    class="border-warning/30 btn btn-outline btn-warning rounded-full normal-case btn-sm"
-  >
+  <button tabindex="0" class="btn btn-neutral btn-sm">
     <#Icon iconify="heroicons-solid:ban" class="w-5 h-5 stroke-1" />
     {l("Block")}
   </button>
@@ -156,11 +150,10 @@
       module={maybe_component(Bonfire.UI.Social.Activity.DeleteObjectLive, @__context__)}
       object={@object}
       icon_class="w-5 h-5 stroke-1"
-      hide_text
       creator_id={Bonfire.UI.Social.Activity.MoreActionsLive.creator_or_subject_id(@activity, @object)}
       object_type_readable={@object_type_readable}
       parent_id={id(@activity)}
-      open_btn_class="flex btn btn-sm btn-error btn-outline rounded-full border-error/30"
+      open_btn_class="btn btn-sm btn-neutral"
     />
   </div>
 {/if}
@@ -172,10 +165,10 @@
   data-role="unflag"
   title={l("Unflag")}
   phx-value-subject={e(@activity, :subject, :id, "")}
-  class="flex rounded-full btn btn-outline btn-info border-info/30 btn-sm"
+  class="flex btn btn-neutral btn-sm"
 >
   <#Icon iconify="fluent:flag-off-16-filled" class="w-5 h-5 stroke-1" />
-  <span class="sr-only">{l("Unflag")}</span>
+  <span class="">{l("Unflag")}</span>
 </button>
 
 {!-- <LinkLive 
