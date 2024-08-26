@@ -105,7 +105,7 @@
 <div aria-haspopup="true" class="dropdown dropdown-end feed_activity relative">
   <button tabindex="0" class="btn btn-neutral btn-sm">
     <#Icon iconify="heroicons-solid:ban" class="w-5 h-5 stroke-1" />
-    {l("Block")}
+    {l("Take action")}
   </button>
   <ul
     tabindex="0"
@@ -114,8 +114,43 @@
     aria-orientation="vertical"
     aria-labelledby="more-menu"
   >
+
+    
+
+      {!-- Hide the object --}
+      <li>
+      <StatelessComponent
+        module={maybe_component(Bonfire.Boundaries.Web.BlockButtonLive, @__context__)}
+        parent_id={@activity_component_id || id(@activity)}
+        object={id(@object)}
+      label={l("this %{object}", object: e(@object_type_readable, l("object")))}
+        scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
+        type={:hide}
+        class="flex items-center w-full gap-2 text-sm"
+        with_icon
+      />
+
+    </li>
+
+       {!-- 
+              # TODO: pass the silenced/ghosted/blocked booleans so it isn't re-queried by BlockButtonLive before enabling:
+              
+                  {#if @object_type != Bonfire.Data.Identity.User}
+  <li>
+    <StatelessComponent
+      module={maybe_component(Bonfire.UI.Social.Activity.DeleteObjectLive, @__context__)}
+      object={@object}
+      icon_class="w-4 h-4 stroke-1 text-base-content/70"
+      creator_id={Bonfire.UI.Social.Activity.MoreActionsLive.creator_or_subject_id(@activity, @object)}
+      object_type_readable={@object_type_readable}
+      parent_id={id(@activity)}
+      open_btn_class="flex items-center w-full gap-2 text-sm"
+    />
+  </li>
+{/if}
+
+               --}
     <li>
-      {!-- Block the author --}
       <StatelessComponent
         module={maybe_component(Bonfire.Boundaries.Web.BlockButtonLive, @__context__)}
         parent_id={@activity_component_id || id(@activity)}
@@ -123,7 +158,7 @@
         peered={e(flagged_subject(@object || @activity), :peered, nil)}
         scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
         label={l("the original author")}
-        type="block"
+        type={:block}
         class="flex items-center w-full gap-2 text-sm"
         with_icon
       />
@@ -137,26 +172,14 @@
         peered={e(@activity, :subject, :peered, nil)}
         scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
         label={l("the flagger")}
-        type="block"
+        type={:block}
         class="flex items-center w-full gap-2 text-sm"
         with_icon
       />
     </li>
   </ul>
 </div>
-{#if @object_type != Bonfire.Data.Identity.User}
-  <div>
-    <StatelessComponent
-      module={maybe_component(Bonfire.UI.Social.Activity.DeleteObjectLive, @__context__)}
-      object={@object}
-      icon_class="w-5 h-5 stroke-1"
-      creator_id={Bonfire.UI.Social.Activity.MoreActionsLive.creator_or_subject_id(@activity, @object)}
-      object_type_readable={@object_type_readable}
-      parent_id={id(@activity)}
-      open_btn_class="btn btn-sm btn-neutral"
-    />
-  </div>
-{/if}
+
 <button
   phx-click="Bonfire.Social.Flags:unflag"
   phx-target={"##{@activity_component_id || "root"}"}
