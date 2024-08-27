@@ -114,42 +114,38 @@
     aria-orientation="vertical"
     aria-labelledby="more-menu"
   >
-
-    
-
+    {#if @object_type != Bonfire.Data.Identity.User}
       {!-- Hide the object --}
+      {!-- 
+            # WIP - TODO: pass the silenced/ghosted/blocked booleans so it isn't re-queried by BlockButtonLive before enabling:
+
+        --}
+
       <li>
-      <StatelessComponent
-        module={maybe_component(Bonfire.Boundaries.Web.BlockButtonLive, @__context__)}
-        parent_id={@activity_component_id || id(@activity)}
-        object={id(@object)}
-      label={l("this %{object}", object: e(@object_type_readable, l("object")))}
-        scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
-        type={:hide}
-        class="flex items-center w-full gap-2 text-sm"
-        with_icon
-      />
+        <StatelessComponent
+          module={maybe_component(Bonfire.Boundaries.Web.BlockButtonLive, @__context__)}
+          parent_id={@activity_component_id || id(@activity)}
+          object={id(@object)}
+          label={l("this %{object}", object: e(@object_type_readable, l("object")))}
+          scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
+          type={:hide}
+          class="flex items-center w-full gap-2 text-sm"
+          with_icon
+        />
+      </li>
 
-    </li>
-
-       {!-- 
-              # TODO: pass the silenced/ghosted/blocked booleans so it isn't re-queried by BlockButtonLive before enabling:
-              
-                  {#if @object_type != Bonfire.Data.Identity.User}
-  <li>
-    <StatelessComponent
-      module={maybe_component(Bonfire.UI.Social.Activity.DeleteObjectLive, @__context__)}
-      object={@object}
-      icon_class="w-4 h-4 stroke-1 text-base-content/70"
-      creator_id={Bonfire.UI.Social.Activity.MoreActionsLive.creator_or_subject_id(@activity, @object)}
-      object_type_readable={@object_type_readable}
-      parent_id={id(@activity)}
-      open_btn_class="flex items-center w-full gap-2 text-sm"
-    />
-  </li>
-{/if}
-
-               --}
+      <li>
+        <StatelessComponent
+          module={maybe_component(Bonfire.UI.Social.Activity.DeleteObjectLive, @__context__)}
+          object={@object}
+          icon_class="w-4 h-4 stroke-1 text-base-content/70"
+          creator_id={Bonfire.UI.Social.Activity.MoreActionsLive.creator_or_subject_id(@activity, @object)}
+          object_type_readable={@object_type_readable}
+          parent_id={id(@activity)}
+          open_btn_class="flex items-center w-full gap-2 text-sm"
+        />
+      </li>
+    {/if}
     <li>
       <StatelessComponent
         module={maybe_component(Bonfire.Boundaries.Web.BlockButtonLive, @__context__)}
