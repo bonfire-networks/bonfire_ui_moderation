@@ -109,7 +109,7 @@
   </button>
   <ul
     tabindex="0"
-    class="!block w-72 mt-2 z-[910] menu-sm relative shadow menu dropdown-content text-base-content bg-base-200 rounded-lg dropdown_actions"
+    class="!block w-72 z-[910] relative dropdown-content  p-0.5 menu shadow-lg bg-base-100 shadow-xl border border-base-content/20 rounded-lg dropdown_actions"
     role="menu"
     aria-orientation="vertical"
     aria-labelledby="more-menu"
