@@ -1,6 +1,14 @@
-{!-- {#if current_user(@__context__)} --}
-
-{#if id(@flagged)}
+{#if !current_user_id(@__context__)}
+  <li>
+    <a
+      href={"/remote_interaction?type=flag&name=#{l("this activity or user")}&url=#{@permalink || URIs.canonical_url(@object)}"}
+      class="flex items-center w-full gap-2 text-sm text-base-content"
+    >
+      <#Icon :if={!@hide_icon} solid="Flag" class="w-4 h-4 shrink-0" />
+      <span class="truncate ellipsis">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
+    </a>
+  </li>
+{#elseif id(@flagged)}
   <div />
 {#else}
   <Bonfire.UI.Common.OpenModalLive
@@ -27,7 +35,7 @@
     <:open_btn>
       <div class="flex items-center w-full gap-2 text-sm">
         <#Icon :if={!@hide_icon} solid="Flag" class="w-4 h-4 shrink-0" />
-        <span class="truncate ellipsis">{e(@label, l("Flag the author"))}</span>
+        <span class="truncate ellipsis">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
       </div>
     </:open_btn>
     <:action_btns>
