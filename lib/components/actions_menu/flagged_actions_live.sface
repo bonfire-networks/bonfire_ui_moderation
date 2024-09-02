@@ -5,7 +5,7 @@
   </button>
   <ul
     tabindex="0"
-    class="!block w-72 mt-2 z-[910] dropdown-content p-0.5 menu shadow-xl bg-base-100 border rounded border-base-content/20 dropdown_actions"
+    class="!block w-72 mt-2 z-[910] dropdown-content bonfire-dropdown-menu dropdown_actions"
     role="menu"
     aria-orientation="vertical"
     aria-labelledby="more-menu"
