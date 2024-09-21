@@ -12,7 +12,7 @@ defmodule Bonfire.Social.Flags.LiveHandler do
         :noreply,
         socket
         |> assign_flash(:info, l("%{user_or_thing} flagged!", user_or_thing: params["type"]))
-        |> assign(flagged: Map.get(socket.assigns, :flagged, []) ++ [{id, true}])
+        |> assign(flagged: Map.get(assigns(socket), :flagged, []) ++ [{id, true}])
       }
     end
   end
@@ -23,7 +23,7 @@ defmodule Bonfire.Social.Flags.LiveHandler do
 
     subject =
       if attrs["subject"] &&
-           Bonfire.Boundaries.can?(socket.assigns[:__context__], :mediate, attrs["context"]),
+           Bonfire.Boundaries.can?(assigns(socket)[:__context__], :mediate, attrs["context"]),
          do:
            Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> ok_unwrap(nil),
          else: current_user
@@ -32,7 +32,7 @@ defmodule Bonfire.Social.Flags.LiveHandler do
       {:noreply,
        socket
        |> assign_flash(:info, l("Unflagged!"))
-       #  |> assign(flagged: Map.get(socket.assigns, :flagged, []) ++ [{id, false}])
+       #  |> assign(flagged: Map.get(assigns(socket), :flagged, []) ++ [{id, false}])
        |> Bonfire.UI.Social.ActivityLive.remove()}
     end
   end
@@ -42,7 +42,7 @@ defmodule Bonfire.Social.Flags.LiveHandler do
 
     subject =
       if attrs["subject"] &&
-           Bonfire.Boundaries.can?(socket.assigns[:__context__], :mediate, context),
+           Bonfire.Boundaries.can?(assigns(socket)[:__context__], :mediate, context),
          do:
            Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> ok_unwrap(nil),
          else: current_user
@@ -52,7 +52,7 @@ defmodule Bonfire.Social.Flags.LiveHandler do
       {:noreply,
        socket
        |> assign_flash(:info, l("Unpublished!"))
-       #  |> assign(flagged: Map.get(socket.assigns, :flagged, []) ++ [{id, false}])
+       #  |> assign(flagged: Map.get(assigns(socket), :flagged, []) ++ [{id, false}])
        |> Bonfire.UI.Social.ActivityLive.remove()}
     end
   end
