@@ -20,14 +20,14 @@
   >
     <div class="mt-3 prose-sm prose">
       <p>{l(
-          "The admins will review the content and might get in touch with you or the author for clarification. They may then delete it and/or block the person or originating instance if appropriate."
+          "This will go into a queue for moderators to review. They may get in touch with you and/or the author for clarification before taking action, such as removing the content or blocking the person or originating instance when appropriate. Keep in mind that you can personally block the user/instance as well."
         )}</p>
 
       <textarea
         name="comment"
         class="textarea textarea-bordered textarea-sm w-full mt-4 h-[10rem] leading-[1.5]"
         placeholder={l(
-          "Please write a small explanation for the moderators (e.g. what boundaries were broken, how it is affecting you or others, and what you're requesting to repair that...)"
+          "Please write a small explanation for the moderators, like what boundaries were broken (e.g. a section of code of conduct), how it is harming you or others, and what kind of intervention you're requesting...)"
         )}
       />
     </div>
