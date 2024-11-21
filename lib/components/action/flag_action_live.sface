@@ -13,7 +13,7 @@
 {#else}
   <Bonfire.UI.Common.OpenModalLive
     :if={@parent_id && @object}
-    id={Text.random_string()}
+    id={random_dom_id()}
     title_text={e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}
     open_btn_wrapper_class="flex items-center gap-2 text-sm w-full flex-1"
     form_opts={%{"phx-submit" => "Bonfire.Social.Flags:flag"}}
