@@ -8,8 +8,18 @@ defmodule Bonfire.Social.Moderation.FlagTest do
   alias Bonfire.Files.Test
   import Bonfire.Common.Enums
 
+  setup do
+    account = fake_account!()
+    me = fake_user!(account)
+    alice = fake_user!(account)
+    bob = fake_user!(account)
+    carl = fake_user!(account)
+    conn = conn(user: me, account: account)
+
+    {:ok, conn: conn, account: account, me: me, alice: alice, bob: bob, carl: carl}
+  end
+
   test "Flagging a post works" do
-    feed_id = Bonfire.Social.Feeds.named_feed_id(:local)
     # create a bunch of users
     account = fake_account!()
     me = fake_user!(account)
@@ -20,19 +30,13 @@ defmodule Bonfire.Social.Moderation.FlagTest do
     assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
     # login as me
     conn = conn(user: me, account: account)
-    # navigate to local feed
-    {:ok, view, _html} = live(conn, "/feed/local")
-    # Then I should see the post in my feed
-    # open_browser(view)
-    assert has_element?(view, "article", content)
-    # then I flag the post
-    view
-    |> element("article li[data-role=flag_object] div[data-role=open_modal]")
-    |> render_click()
 
-    view |> element("button[data-role=submit_flag]") |> render_click()
-
-    assert render(view) =~ "flagged!"
+    conn
+    |> visit("/feed/local")
+    |> open_browser()
+    |> click_button("[data-role=open_modal]", "Flag this post")
+    |> click_button("button[data-role=submit_flag]", "Flag this post")
+    |> assert_has("[role=alert]", text: "flagged!")
   end
 
   test "My flags should not appear on local feed, and only on flagged feed or flags list" do
