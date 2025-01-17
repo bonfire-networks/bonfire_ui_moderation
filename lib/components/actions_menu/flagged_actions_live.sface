@@ -1,15 +1,9 @@
-<div aria-haspopup="true" class="dropdown dropdown-end feed_activity relative">
-  <button tabindex="0" class="btn btn-neutral btn-sm">
-    <#Icon iconify="game-icons:heart-plus" class="w-5 h-5 stroke-1" />
+<div class="dropdown">
+  <div tabindex="0" role="button" class="btn btn-secondary btn-soft btn-sm">
+    <#Icon iconify="game-icons:heart-plus" class="w-5 h-5" />
     {l("Mediate")}
-  </button>
-  <ul
-    tabindex="0"
-    class="!block w-72 mt-2 z-[910] dropdown-content bonfire-dropdown-menu dropdown_actions"
-    role="menu"
-    aria-orientation="vertical"
-    aria-labelledby="more-menu"
-  >
+  </div>
+  <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-64 p-2 shadow-sm">
     <li :if={e(@activity, :subject, :id, nil) &&
       current_user_id(@__context__) != e(@activity, :subject, :id, nil)}>
       <Bonfire.UI.Common.SmartInputButtonLive
@@ -53,7 +47,6 @@
     {#case e(@activity, :tree, :parent_id, nil)}
       {#match nil}
       {#match context_id}
-        <li class="" />
         <li>
           <Bonfire.UI.Common.OpenModalLive id={"remove_post_#{e(@object, :id, "")}"} no_actions>
             <div>
@@ -102,18 +95,12 @@
   </ul>
 </div>
 
-<div aria-haspopup="true" class="dropdown dropdown-end feed_activity relative">
-  <button tabindex="0" class="btn btn-neutral btn-sm">
+<div class="dropdown">
+  <div tabindex="0" role="button" class="btn btn-warning btn-soft btn-sm">
     <#Icon iconify="heroicons-solid:ban" class="w-5 h-5 stroke-1" />
     {l("Take action")}
-  </button>
-  <ul
-    tabindex="0"
-    class="!block w-72 z-[910] relative dropdown-content  p-0.5 menu shadow-lg bg-base-100 shadow-xl border border-base-content/20 rounded-lg dropdown_actions"
-    role="menu"
-    aria-orientation="vertical"
-    aria-labelledby="more-menu"
-  >
+  </div>
+  <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-64 p-2 shadow-sm">
     {#if @object_type != Bonfire.Data.Identity.User}
       {!-- Hide the object --}
       {!-- 
@@ -184,7 +171,7 @@
   data-role="unflag"
   title={l("Unflag")}
   phx-value-subject={e(@activity, :subject, :id, "")}
-  class="flex btn btn-neutral btn-sm"
+  class="flex btn btn-sm"
 >
   <#Icon iconify="fluent:flag-off-16-filled" class="w-5 h-5 stroke-1" />
   <span class="">{l("Unflag")}</span>
