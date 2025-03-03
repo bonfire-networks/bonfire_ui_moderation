@@ -9,7 +9,8 @@ defmodule Bonfire.UI.Moderation.FlagsLive do
   )
 
   #
-  prop feed_count, :string, default: ""
+  prop feed_count, :string, default: nil
+  prop scope, :any, default: nil
 
   def update(assigns, socket) do
     {:ok,

@@ -23,7 +23,7 @@ defmodule Bonfire.UI.Moderation.ChannelCase do
     quote do
       # Import conveniences for testing with channels
       import Phoenix.ChannelTest
-      import Bonfire.UI.Posts.ChannelCase
+      import Bonfire.UI.Moderation.ChannelCase
 
       # The default endpoint for testing
       @endpoint Application.compile_env!(:bonfire, :endpoint_module)

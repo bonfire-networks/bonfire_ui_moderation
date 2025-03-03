@@ -23,15 +23,18 @@ defmodule Bonfire.UI.Moderation.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
 
-      # import Bonfire.UI.Common.Testing.Helpers
+      import Bonfire.UI.Common.Testing.Helpers
 
-      # import Phoenix.LiveViewTest
+      import Phoenix.LiveViewTest
       # import Surface.LiveViewTest
 
       import PhoenixTest
+
       # import Bonfire.UI.Posts.ConnCase
-      import Bonfire.UI.Posts.Test.ConnHelpers
-      import Bonfire.UI.Posts.Test.FakeHelpers
+      import Bonfire.UI.Moderation.Test.ConnHelpers
+      import Bonfire.UI.Moderation.Test.FakeHelpers
+
+      # import  Bonfire.Me.Fake
 
       import Untangle
       use Arrows
