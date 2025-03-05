@@ -9,6 +9,5 @@
     id={ComponentID.new(Bonfire.UI.Social.FeedLive, :flags, __MODULE__)}
     feed_name={if @scope == :instance, do: :flagged_content, else: :flagged_by_me}
     showing_within={:flags}
-    hide_tabs
   />
 </div>
