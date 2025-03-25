@@ -9,7 +9,7 @@
       <Bonfire.UI.Common.SmartInputButtonLive
         create_object_type={:message}
         smart_input_opts={%{
-          create_object_type: :message,
+          create_object_type: "message",
           to_circles: [
             %{
               ed(@activity, :subject, :character, :username, "") =>
@@ -29,7 +29,7 @@
         <Bonfire.UI.Common.SmartInputButtonLive
           create_object_type={:message}
           smart_input_opts={%{
-            create_object_type: :message,
+            create_object_type: "message",
             to_circles: [
               %{
                 id(e(flagged_character(@object), nil)) =>
