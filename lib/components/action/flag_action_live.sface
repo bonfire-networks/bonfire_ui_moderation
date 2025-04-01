@@ -23,7 +23,7 @@
           "This will go into a queue for moderators to review. They may get in touch with you and/or the author for clarification before taking action, such as removing the content or blocking the person or originating instance when appropriate. Keep in mind that you can personally block the user/instance as well."
         )}</p>
 
-      <label for="comment-flag" class="sr-only">{l "Add a comment for the flag"}</label>
+      <label for="comment-flag" class="sr-only">{l("Add a comment for the flag")}</label>
       <textarea
         id="comment-flag"
         name="comment"

@@ -20,7 +20,15 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
 
     conn = conn(user: me, account: account)
 
-    {:ok, admin: admin, conn: conn, account: account, me: me, alice: alice, bob: bob, carl: carl, admin_account: admin_account}
+    {:ok,
+     admin: admin,
+     conn: conn,
+     account: account,
+     me: me,
+     alice: alice,
+     bob: bob,
+     carl: carl,
+     admin_account: admin_account}
   end
 
   test "My flags should not appear on local feed, and only on flagged feed or flags list", %{

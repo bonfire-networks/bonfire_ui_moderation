@@ -11,7 +11,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
   alias Bonfire.Common.Config
 
   setup do
-   _ = fake_admin!()
+    _ = fake_admin!()
     account = fake_account!()
     me = fake_user!(account)
     alice = fake_user!(account)
@@ -41,8 +41,8 @@ defmodule Bonfire.UI.Moderation.FlagTest do
 
   test "If I already flagged an activity, I want to be told rather than be able to attempt flagging twice",
        %{conn: conn, me: me, account: account, alice: alice} do
-        Process.put(:feed_live_update_many_preload_mode, :inline)
-        # Alice creates a post
+    Process.put(:feed_live_update_many_preload_mode, :inline)
+    # Alice creates a post
     content = "here is an epic html post"
     attrs = %{post_content: %{html_body: content}}
     assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
@@ -82,9 +82,14 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     |> visit("/settings/user/flags")
     |> within("#flags_list", fn session ->
       session
-      |> assert_has("article", text: carl.profile.name)
-      |> refute_has("article", text: content)
-    end)
+      |> visit("/settings/user/flags")
+      |> wait_async()
+      |> PhoenixTest.open_browser()
+      |> within("#flags_list", fn session ->
+        session
+        |> assert_has("article", text: carl.profile.name)
+        |> refute_has("article", text: content)
+      end)
   end
 
   test "Unflag a post works", %{conn: conn, me: me, account: account, carl: carl} do
