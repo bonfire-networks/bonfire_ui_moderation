@@ -69,20 +69,17 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     session = conn
     |> visit("/feed/local")
     |> assert_has("article", text: content)
-    |> click_button("[data-role=open_modal]", "Flag this post")
-    # |> click_button("[data-role=open_modal]", "Flag #{carl.profile.name}")
+    # |> click_button("[data-role=open_modal]", "Flag this post")
+    |> click_button("[data-role=open_modal]", "Flag #{carl.profile.name}")
     |> fill_in("Add a comment for the flag", with: "test")
-    |> click_button("button[data-role=submit_flag]", "Flag this post")
-    # |> click_button("button[data-role=submit_flag]", "Flag #{carl.profile.name}")
-    |> PhoenixTest.open_browser()
+    # |> click_button("button[data-role=submit_flag]", "Flag this post")
+    |> click_button("button[data-role=submit_flag]", "Flag #{carl.profile.name}")
     |> assert_has("[role=alert]", text: "flagged!")
 
     Process.put(:feed_live_update_many_preload_mode, :async_actions)
 
     session = session
     |> visit("/settings/user/flags")
-    |> wait_async()
-    |> PhoenixTest.open_browser()
     |> within("#flags_list", fn session ->
       session
       |> assert_has("article", text: carl.profile.name)
@@ -90,18 +87,11 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     end)
   end
 
-  test "Unflag a post works" do
-    account = fake_account!()
-    me = fake_user!(account)
-    alice = fake_user!(account)
-    carl = fake_user!(account)
-    admin = fake_admin!(account)
-
-    conn = conn(user: admin, account: account)
+  test "Unflag a post works", %{conn: conn, me: me, account: account, carl: carl} do
     # Alice creates a post
     content = "here is an epic html post"
     attrs = %{post_content: %{html_body: content}}
-    assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
+    assert {:ok, post} = Posts.publish(current_user: carl, post_attrs: attrs, boundary: "local")
 
     # Flag the post
     {:ok, _flag} = Bonfire.Social.Flags.flag(me, post.id)
@@ -109,10 +99,9 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     # Unflag the post
     conn
     |> visit("/settings/user/flags")
-    |> PhoenixTest.open_browser()
     |> assert_has("article", text: content)
-    |> click_button("button[data-role=unflag]")
-    |> assert_has(text: "Unflagged!")
+    |> click_button("[data-role=unflag]", "Unflag")
+    |> assert_has("[role=alert]", text: "Unflagged!")
     |> refute_has("article", text: content)
   end
 
@@ -124,8 +113,8 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     conn
     |> visit("/settings/user/flags")
     |> assert_has("article", text: alice.profile.name)
-    |> click_button("button[data-role=unflag]")
-    |> assert_has(text: "Unflagged!")
+    |> click_button("button[data-role=unflag]", "Unflag")
+    |> assert_has("[role=alert]", text: "Unflagged!")
     |> refute_has("article", text: alice.profile.name)
   end
 

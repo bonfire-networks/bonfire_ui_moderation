@@ -25,7 +25,6 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       # Check notifications
       conn(user: someone, account: some_account)
       |> visit("/notifications")
-      |> PhoenixTest.open_browser()
       |> assert_has(".bonfire_feed", text: "epic html post")
       |> assert_has(".bonfire_feed", text: flagger.profile.name)
       |> assert_has(".bonfire_feed", text: "flagged")
@@ -35,22 +34,23 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
     @tag :fixme
     test "flags on a post (which admin does not explicitly have permission to see) in admin's notifications" do
       alice_account = fake_account!()
-      {:ok, alice} = Users.make_admin(fake_user!(alice_account))
+      alice = fake_admin!(alice_account)
       bob = fake_user!()
 
       # Create a post with limited visibility
-      attrs = %{post_content: %{html_body: "<p>here is an epic html post</p>"}}
+      attrs = %{post_content: %{html_body: "epic html post"}}
 
       assert {:ok, post} =
                Posts.publish(current_user: bob, post_attrs: attrs, boundary: "mentions")
 
       # Flag the post
       flagger = fake_user!()
-      Flags.flag(flagger, post)
+      {:ok, post} = Flags.flag(flagger, post)
 
       # Check notifications
       conn(user: alice, account: alice_account)
       |> visit("/notifications")
+      |> PhoenixTest.open_browser()
       |> assert_has(".bonfire_feed", text: "epic html post")
       |> assert_has(".bonfire_feed", text: flagger.profile.name)
       |> assert_has(".bonfire_feed", text: "flagged")
