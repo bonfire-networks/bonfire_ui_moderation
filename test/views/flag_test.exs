@@ -11,6 +11,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
   alias Bonfire.Common.Config
 
   setup do
+   _ = fake_admin!()
     account = fake_account!()
     me = fake_user!(account)
     alice = fake_user!(account)
@@ -65,22 +66,25 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     assert {:ok, post} = Posts.publish(current_user: carl, post_attrs: attrs, boundary: "local")
 
     # Flag the user
-    conn
+    session = conn
     |> visit("/feed/local")
     |> assert_has("article", text: content)
-    |> click_button("[data-role=open_modal]", "Flag #{carl.profile.name}")
+    |> click_button("[data-role=open_modal]", "Flag this post")
+    # |> click_button("[data-role=open_modal]", "Flag #{carl.profile.name}")
     |> fill_in("Add a comment for the flag", with: "test")
-    |> click_button("button[data-role=submit_flag]", "Flag #{carl.profile.name}")
+    |> click_button("button[data-role=submit_flag]", "Flag this post")
+    # |> click_button("button[data-role=submit_flag]", "Flag #{carl.profile.name}")
+    |> PhoenixTest.open_browser()
     |> assert_has("[role=alert]", text: "flagged!")
 
     Process.put(:feed_live_update_many_preload_mode, :async_actions)
-    conn
+
+    session = session
     |> visit("/settings/user/flags")
-    |> Process.sleep(1000) # Give time for component to load
+    |> wait_async()
     |> PhoenixTest.open_browser()
     |> within("#flags_list", fn session ->
       session
-      |> PhoenixTest.open_browser()
       |> assert_has("article", text: carl.profile.name)
       |> refute_has("article", text: content)
     end)
