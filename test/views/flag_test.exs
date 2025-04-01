@@ -8,6 +8,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
   alias Bonfire.Me.Users
   alias Bonfire.Files.Test
   import Bonfire.Common.Enums
+  alias Bonfire.Common.Config
 
   setup do
     account = fake_account!()
@@ -23,6 +24,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
 
   test "Flagging a post works", %{conn: conn, me: me, account: account, alice: alice} do
     # Alice creates a post
+    Process.put(:feed_live_update_many_preload_mode, :inline)
     content = "here is an epic html post"
     attrs = %{post_content: %{html_body: content}}
     assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
@@ -31,13 +33,15 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     conn
     |> visit("/feed/local")
     |> click_button("[data-role=open_modal]", "Flag this post")
+    |> fill_in("Add a comment for the flag", with: "test")
     |> click_button("button[data-role=submit_flag]", "Flag this post")
     |> assert_has("[role=alert]", text: "flagged!")
   end
 
   test "If I already flagged an activity, I want to be told rather than be able to attempt flagging twice",
        %{conn: conn, me: me, account: account, alice: alice} do
-    # Alice creates a post
+        Process.put(:feed_live_update_many_preload_mode, :inline)
+        # Alice creates a post
     content = "here is an epic html post"
     attrs = %{post_content: %{html_body: content}}
     assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
@@ -49,43 +53,59 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     conn
     |> visit("/feed/local")
     |> assert_has("article", text: content)
-    |> click_button("article li[data-role=flag_object] div[data-role=open_modal]")
-    |> assert_has(text: "Already flagged")
+    |> click_button("[data-role=open_modal]", "Flag this post")
+    |> assert_has("button", text: "Already flagged")
   end
 
-  test "Flagging a user works", %{conn: conn, me: me, account: account, alice: alice} do
+  test "Flagging a user works", %{conn: conn, me: me, account: account, carl: carl} do
+    Process.put(:feed_live_update_many_preload_mode, :inline)
     # Alice creates a post
     content = "here is an epic html post"
     attrs = %{post_content: %{html_body: content}}
-    assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
+    assert {:ok, post} = Posts.publish(current_user: carl, post_attrs: attrs, boundary: "local")
 
     # Flag the user
     conn
     |> visit("/feed/local")
     |> assert_has("article", text: content)
-    |> click_button("article li[data-role=flag_author] div[data-role=open_modal]")
-    |> click_button("button[data-role=submit_flag]")
+    |> click_button("[data-role=open_modal]", "Flag #{carl.profile.name}")
+    |> fill_in("Add a comment for the flag", with: "test")
+    |> click_button("button[data-role=submit_flag]", "Flag #{carl.profile.name}")
     |> assert_has("[role=alert]", text: "flagged!")
+
+    Process.put(:feed_live_update_many_preload_mode, :async_actions)
+    conn
     |> visit("/settings/user/flags")
+    |> Process.sleep(1000) # Give time for component to load
+    |> PhoenixTest.open_browser()
     |> within("#flags_list", fn session ->
       session
-      |> assert_has(text: alice.profile.name)
-      |> refute_has(text: content)
+      |> PhoenixTest.open_browser()
+      |> assert_has("article", text: carl.profile.name)
+      |> refute_has("article", text: content)
     end)
   end
 
-  test "Unflag a post works", %{conn: conn, me: me, account: account, alice: alice} do
+  test "Unflag a post works" do
+    account = fake_account!()
+    me = fake_user!(account)
+    alice = fake_user!(account)
+    carl = fake_user!(account)
+    admin = fake_admin!(account)
+
+    conn = conn(user: admin, account: account)
     # Alice creates a post
     content = "here is an epic html post"
     attrs = %{post_content: %{html_body: content}}
     assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
 
     # Flag the post
-    {:ok, flag} = Bonfire.Social.Flags.flag(me, post.id)
+    {:ok, _flag} = Bonfire.Social.Flags.flag(me, post.id)
 
     # Unflag the post
     conn
     |> visit("/settings/user/flags")
+    |> PhoenixTest.open_browser()
     |> assert_has("article", text: content)
     |> click_button("button[data-role=unflag]")
     |> assert_has(text: "Unflagged!")

@@ -13,7 +13,7 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       poster = fake_user!()
 
       # Create a post
-      attrs = %{post_content: %{html_body: "<p>here is an epic html post</p>"}}
+      attrs = %{post_content: %{html_body: "epic html post"}}
 
       assert {:ok, post} =
                Posts.publish(current_user: poster, post_attrs: attrs, boundary: "public")
@@ -25,9 +25,10 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       # Check notifications
       conn(user: someone, account: some_account)
       |> visit("/notifications")
-      |> assert_has(".feed", text: "epic html post")
-      |> assert_has(".feed", text: flagger.profile.name)
-      |> assert_has(".feed", text: "flagged")
+      |> PhoenixTest.open_browser()
+      |> assert_has(".bonfire_feed", text: "epic html post")
+      |> assert_has(".bonfire_feed", text: flagger.profile.name)
+      |> assert_has(".bonfire_feed", text: "flagged")
     end
 
     # TODO? This is not the current behaviour, flags are not shown in notifications but only in admin panel
@@ -50,9 +51,9 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       # Check notifications
       conn(user: alice, account: alice_account)
       |> visit("/notifications")
-      |> assert_has(".feed", text: "epic html post")
-      |> assert_has(".feed", text: flagger.profile.name)
-      |> assert_has(".feed", text: "flagged")
+      |> assert_has(".bonfire_feed", text: "epic html post")
+      |> assert_has(".bonfire_feed", text: flagger.profile.name)
+      |> assert_has(".bonfire_feed", text: "flagged")
     end
   end
 end
