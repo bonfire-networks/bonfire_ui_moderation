@@ -10,7 +10,7 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
   import Bonfire.Common.Enums
 
   setup do
-    _admin = fake_admin!()
+    admin = fake_admin!()
     account = fake_account!()
     me = fake_user!(account)
     alice = fake_user!(account)
@@ -19,17 +19,18 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
 
     conn = conn(user: me, account: account)
 
-    {:ok, conn: conn, account: account, me: me, alice: alice, bob: bob, carl: carl}
+    {:ok, admin: admin, conn: conn, account: account, me: me, alice: alice, bob: bob, carl: carl}
   end
 
   test "My flags should not appear on local feed, and only on flagged feed or flags list", %{
     conn: conn,
     me: me,
     account: account,
-    alice: alice
+    alice: alice,
+    admin: admin
   } do
     feed_id = Bonfire.Social.Feeds.named_feed_id(:local)
-    admin = fake_admin!(account)
+    # admin = fake_admin!(account)
 
     refute Accounts.is_admin?(account)
     assert Accounts.is_admin?(admin)
