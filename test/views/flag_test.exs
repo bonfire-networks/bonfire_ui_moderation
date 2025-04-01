@@ -78,13 +78,11 @@ defmodule Bonfire.UI.Moderation.FlagTest do
 
     Process.put(:feed_live_update_many_preload_mode, :async_actions)
 
-    session = session
-    |> visit("/settings/user/flags")
-    |> within("#flags_list", fn session ->
+
       session
       |> visit("/settings/user/flags")
       |> wait_async()
-      |> PhoenixTest.open_browser()
+      # |> PhoenixTest.open_browser()
       |> within("#flags_list", fn session ->
         session
         |> assert_has("article", text: carl.profile.name)
