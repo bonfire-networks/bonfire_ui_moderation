@@ -25,13 +25,11 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       # Check notifications
       conn(user: someone, account: some_account)
       |> visit("/notifications")
-      |> assert_has(".bonfire_feed", text: "epic html post")
-      |> assert_has(".bonfire_feed", text: flagger.profile.name)
-      |> assert_has(".bonfire_feed", text: "flagged")
+      |> assert_has("[data-id=feed] article", text: "epic html post")
+      |> assert_has("[data-id=feed] article", text: flagger.profile.name)
+      |> assert_has("[data-id=feed] article", text: "flagged")
     end
 
-    # TODO? This is not the current behaviour, flags are not shown in notifications but only in admin panel
-    @tag :fixme
     test "flags on a post (which admin does not explicitly have permission to see) in admin's notifications" do
       alice_account = fake_account!()
       alice = fake_admin!(alice_account)
@@ -50,10 +48,12 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       # Check notifications
       conn(user: alice, account: alice_account)
       |> visit("/notifications")
-      |> PhoenixTest.open_browser()
-      |> assert_has(".bonfire_feed", text: "epic html post")
-      |> assert_has(".bonfire_feed", text: flagger.profile.name)
-      |> assert_has(".bonfire_feed", text: "flagged")
+      # |> PhoenixTest.open_browser()
+      |> assert_has("[data-id=feed] article", text: "epic html post")
+      |> assert_has("[data-id=feed] article", text: flagger.profile.name)
+      |> assert_has("[data-id=feed] article", text: "flagged")
+
+      # TODO: sanity checks that nobody else can do the same
     end
   end
 end
