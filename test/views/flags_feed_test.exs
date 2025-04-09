@@ -39,7 +39,6 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
     admin: admin,
     admin_account: admin_account
   } do
-    # feed_id = Bonfire.Social.Feeds.named_feed_id(:local)
     # admin = fake_admin!(account)
 
     refute Accounts.is_admin?(account)
@@ -89,8 +88,6 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
     alice: alice,
     bob: bob
   } do
-    # feed_id = Bonfire.Social.Feeds.named_feed_id(:local)
-
     # Alice creates a post
     content = "here is an epic html post"
     attrs = %{post_content: %{html_body: content}}
