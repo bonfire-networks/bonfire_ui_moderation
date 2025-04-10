@@ -3,7 +3,7 @@
     <#Icon iconify="game-icons:heart-plus" class="w-5 h-5" />
     {l("Mediate")}
   </div>
-  <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-64 p-2 shadow-sm">
+  <ul tabindex="0" class="dropdown-content w-64 menu bg-base-100 shadow border border-base-content/10 rounded-lg p-1">
     <li :if={e(@activity, :subject, :id, nil) &&
       current_user_id(@__context__) != e(@activity, :subject, :id, nil)}>
       <Bonfire.UI.Common.SmartInputButtonLive
@@ -100,7 +100,7 @@
     <#Icon iconify="heroicons-solid:ban" class="w-5 h-5 stroke-1" />
     {l("Take action")}
   </div>
-  <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-64 p-2 shadow-sm">
+  <ul tabindex="0" class="dropdown-content menu w-60 bg-base-100 shadow border border-base-content/10 rounded-lg p-1">
     {#if @object_type != Bonfire.Data.Identity.User}
       {!-- Hide the object --}
       {!-- 
@@ -124,7 +124,7 @@
         <StatelessComponent
           module={maybe_component(Bonfire.UI.Social.Activity.DeleteObjectLive, @__context__)}
           object={@object}
-          icon_class="w-4 h-4 stroke-1 text-base-content/70"
+          hide_icon
           creator_id={Bonfire.UI.Social.Activity.MoreActionsLive.creator_or_subject_id(@activity, @object)}
           object_type_readable={@object_type_readable}
           parent_id={id(@activity)}
