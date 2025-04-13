@@ -48,7 +48,7 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       # Check notifications
       conn(user: someone, account: some_account)
       |> visit("/notifications")
-      |> assert_has("[data-id=feed] article", text: poster.profile.name)
+      |> assert_has_or_open_browser("[data-id=feed] article", text: poster.profile.name)
       |> assert_has("[data-id=feed] article", text: "flagged")
     end
 
