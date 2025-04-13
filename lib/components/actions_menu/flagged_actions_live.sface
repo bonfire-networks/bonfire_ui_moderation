@@ -40,7 +40,9 @@
               }
             ]
           }}
-          prompt={l("Message the original author")}
+          prompt={if @object_type != Bonfire.Data.Identity.User,
+            do: l("Message the original author"),
+            else: l("Message the user")}
           icon="heroicons-solid:mail"
           class="!flex items-center gap-2 text-sm"
         />
@@ -138,6 +140,7 @@
         />
       </li>
     {/if}
+
     <li>
       <StatelessComponent
         module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
@@ -145,12 +148,29 @@
         object={flagged_subject(@object || @activity)}
         peered={e(flagged_subject(@object || @activity), :peered, nil)}
         scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
-        label={l("the original author")}
+        label={if @object_type != Bonfire.Data.Identity.User, do: l("the original author"), else: l("the user")}
         type={:block}
         class="flex items-center w-full gap-2 text-sm"
         with_icon
       />
     </li>
+
+    <li>
+      <button
+        phx-click="Bonfire.Social.Flags:unflag"
+        phx-target={"##{@activity_component_id || "root"}"}
+        phx-value-id={e(@object, :id, "")}
+        phx-value-context={e(@activity, :tree, :parent_id, nil)}
+        data-role="unflag"
+        title={l("Unflag")}
+        phx-value-subject={e(@activity, :subject, :id, "")}
+        class="flex items-center w-full gap-2 text-sm"
+      >
+        <#Icon iconify="fluent:flag-off-16-filled" class="w-5 h-5 stroke-1" />
+        <span class="">{l("Unflag")}</span>
+      </button>
+    </li>
+
     <li>
       {!-- Block the flagger --}
       <StatelessComponent
@@ -168,6 +188,7 @@
   </ul>
 </div>
 
+{!-- 
 <button
   phx-click="Bonfire.Social.Flags:unflag"
   phx-target={"##{@activity_component_id || "root"}"}
@@ -182,15 +203,16 @@
   <span class="">{l("Unflag")}</span>
 </button>
 
-{!-- <LinkLive 
+<LinkLive 
       to={@permalink}
     >
       <button
         class="normal-case btn btn-sm">
         {l "View"}
       </button>
-    </LinkLive> --}
-{!-- <Bonfire.UI.Social.Activity.MoreActionsLive
+    </LinkLive> 
+    
+ <Bonfire.UI.Social.Activity.MoreActionsLive
       object={@object} 
       object_type={@object_type} 
       activity={@activity} 
