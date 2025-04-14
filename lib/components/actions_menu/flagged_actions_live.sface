@@ -11,17 +11,15 @@
       current_user_id(@__context__) != e(@activity, :subject, :id, nil)}>
       <Bonfire.UI.Common.SmartInputButtonLive
         create_object_type={:message}
+        hide_icon
         smart_input_opts={%{
-          create_object_type: "message",
+          create_object_type: :message,
+          recipients_editable: true,
           to_circles: [
-            %{
-              ed(@activity, :subject, :character, :username, "") =>
-                id(e(@activity, :subject, :character, :id, nil))
-            }
+            {id(e(@activity, :subject, :character, :id, nil)), ed(@activity, :subject, :character, :username, "")}
           ]
         }}
         prompt={l("Message the flagger")}
-        icon="heroicons-solid:mail"
         class="!flex items-center gap-2 text-sm"
       />
     </li>
@@ -31,19 +29,17 @@
       <div class="">
         <Bonfire.UI.Common.SmartInputButtonLive
           create_object_type={:message}
+          hide_icon
           smart_input_opts={%{
-            create_object_type: "message",
+                create_object_type: :message,
+                recipients_editable: true,
             to_circles: [
-              %{
-                id(e(flagged_character(@object), nil)) =>
-                  e(flagged_character(@object || @activity), :username, nil)
-              }
+              {id(e(flagged_character(@object), nil)), e(flagged_character(@object || @activity), :username, nil)}
             ]
           }}
           prompt={if @object_type != Bonfire.Data.Identity.User,
             do: l("Message the original author"),
             else: l("Message the user")}
-          icon="heroicons-solid:mail"
           class="!flex items-center gap-2 text-sm"
         />
       </div>
@@ -116,7 +112,7 @@
 
         --}
 
-      <li>
+      <li class="focus:outline-hidden">
         <StatelessComponent
           module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
           parent_id={@activity_component_id || id(@activity)}
