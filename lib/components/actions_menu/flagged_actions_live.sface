@@ -16,7 +16,8 @@
           create_object_type: :message,
           recipients_editable: true,
           to_circles: [
-            {id(e(@activity, :subject, :character, :id, nil)), ed(@activity, :subject, :character, :username, "")}
+            {id(e(@activity, :subject, :character, :id, nil)),
+             ed(@activity, :subject, :character, :username, "")}
           ]
         }}
         prompt={l("Message the flagger")}
@@ -31,10 +32,11 @@
           create_object_type={:message}
           hide_icon
           smart_input_opts={%{
-                create_object_type: :message,
-                recipients_editable: true,
+            create_object_type: :message,
+            recipients_editable: true,
             to_circles: [
-              {id(e(flagged_character(@object), nil)), e(flagged_character(@object || @activity), :username, nil)}
+              {id(e(flagged_character(@object), nil)),
+               e(flagged_character(@object || @activity), :username, nil)}
             ]
           }}
           prompt={if @object_type != Bonfire.Data.Identity.User,
