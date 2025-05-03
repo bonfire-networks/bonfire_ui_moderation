@@ -8,7 +8,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
   alias Bonfire.Me.Users
   alias Bonfire.Files.Test
   import Bonfire.Common.Enums
-  alias Bonfire.Common.Config
+  use Bonfire.Common.Config
 
   setup do
     _ = fake_admin!()
