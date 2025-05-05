@@ -7,7 +7,7 @@
   <StatefulComponent
     module={maybe_component(Bonfire.UI.Social.FeedLive, @__context__)}
     id={ComponentID.new(Bonfire.UI.Social.FeedLive, :flags, __MODULE__)}
-    feed_name={if @scope == :instance, do: :flagged_content, else: :flagged_by_me}
+    feed_name={if @scope == :instance, do: :flagged_content, else: :my_flags}
     showing_within={:flags}
   />
 </div>
