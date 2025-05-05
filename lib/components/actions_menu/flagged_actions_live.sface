@@ -131,7 +131,7 @@
           module={maybe_component(Bonfire.UI.Social.Activity.DeleteObjectLive, @__context__)}
           object={@object}
           hide_icon
-          creator_id={Bonfire.UI.Social.Activity.MoreActionsLive.creator_or_subject_id(@activity, @object)}
+          creator_id={id(@creator)}
           object_type_readable={@object_type_readable}
           parent_id={id(@activity)}
           open_btn_class="flex items-center w-full gap-2 text-sm"

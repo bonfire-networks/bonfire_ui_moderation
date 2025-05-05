@@ -71,6 +71,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
       |> visit("/feed/local")
       |> assert_has("article", text: content)
       # |> click_button("[data-role=open_modal]", "Flag this post")
+      |> assert_has_or_open_browser("[data-role=open_modal]", text: "Flag #{carl.profile.name}")
       |> click_button("[data-role=open_modal]", "Flag #{carl.profile.name}")
       |> fill_in("Add a comment for the flag", with: "test")
       # |> click_button("button[data-role=submit_flag]", "Flag this post")

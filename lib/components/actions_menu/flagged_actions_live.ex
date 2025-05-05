@@ -4,6 +4,7 @@ defmodule Bonfire.UI.Moderation.FlaggedActionsLive do
   # import Bonfire.UI.Social.Integration
 
   prop activity, :any, default: nil
+  prop creator, :any, default: nil
   prop object, :any
   prop object_type, :any
   prop verb, :string
