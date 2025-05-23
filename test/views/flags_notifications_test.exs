@@ -7,6 +7,28 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
   alias Bonfire.Posts
 
   describe "show" do
+    test "flags on a user (which admin has permission to see) in admin's notifications" do
+      some_account = fake_account!()
+      {:ok, someone} = Users.make_admin(fake_user!(some_account))
+      poster = fake_user!()
+
+      # Create a post
+      attrs = %{post_content: %{html_body: "epic html post"}}
+
+      assert {:ok, post} =
+               Posts.publish(current_user: poster, post_attrs: attrs, boundary: "public")
+
+      # Flag the post
+      flagger = fake_user!()
+      Flags.flag(flagger, poster)
+
+      # Check notifications
+      conn(user: someone, account: some_account)
+      |> visit("/notifications")
+      |> PhoenixTest.open_browser()
+      |> assert_has("[data-id=feed] article", text: poster.profile.name)
+    end
+
     test "flags on a post (which admin has permission to see) in admin's notifications" do
       some_account = fake_account!()
       {:ok, someone} = Users.make_admin(fake_user!(some_account))
