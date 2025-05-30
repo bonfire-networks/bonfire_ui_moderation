@@ -25,8 +25,7 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       # Check notifications
       conn(user: someone, account: some_account)
       |> visit("/notifications")
-      |> PhoenixTest.open_browser()
-      |> assert_has("[data-id=feed] article", text: poster.profile.name)
+      |> assert_has_or_open_browser("[data-id=feed] article", text: poster.profile.name)
     end
 
     test "flags on a post (which admin has permission to see) in admin's notifications" do
@@ -47,7 +46,7 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       # Check notifications
       conn(user: someone, account: some_account)
       |> visit("/notifications")
-      |> assert_has("[data-id=feed] article", text: "epic html post")
+      |> assert_has_or_open_browser("[data-id=feed] article", text: "epic html post")
       |> assert_has("[data-id=feed] article", text: flagger.profile.name)
       |> assert_has("[data-id=feed] article", text: "flagged")
     end
@@ -93,7 +92,7 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       conn(user: alice, account: alice_account)
       |> visit("/notifications")
       # |> PhoenixTest.open_browser()
-      |> assert_has("[data-id=feed] article", text: "epic html post")
+      |> assert_has_or_open_browser("[data-id=feed] article", text: "epic html post")
       |> assert_has("[data-id=feed] article", text: flagger.profile.name)
       |> assert_has("[data-id=feed] article", text: "flagged")
 
