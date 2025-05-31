@@ -143,7 +143,7 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
     |> assert_has("article", text: content)
   end
 
-  test "As an admin, When a user flags an activity I want to see the activity in flags feed in admin settings",
+  test "As an admin, When a user flags an activity with a comment, I want to see the activity and comment in flags feed in admin settings",
        %{conn: conn, me: me, account: account, alice: alice, bob: bob} do
     # Make myself an admin
     {:ok, me} = Bonfire.Me.Users.make_admin(me)
@@ -154,12 +154,13 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
     assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
 
     # Bob flags the post
-    {:ok, flag} = Bonfire.Social.Flags.flag(bob, post.id)
+    {:ok, flag} = Bonfire.Social.Flags.flag(bob, post.id, comment: "comment on flag")
 
     # Check admin flags view
     conn(user: me, account: account)
     |> visit("/settings/instance/flags")
     |> assert_has("article", text: content)
+    |> assert_has("article", text: "comment on flag")
   end
 
   test "As an admin, When a user flags another user I want to see the user flagged in flags feed in admin settings",
