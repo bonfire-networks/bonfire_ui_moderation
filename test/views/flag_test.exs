@@ -1,5 +1,5 @@
 defmodule Bonfire.UI.Moderation.FlagTest do
-  use Bonfire.UI.Moderation.ConnCase, async: true
+  use Bonfire.UI.Moderation.ConnCase, async: false
 
   alias Bonfire.Social.Fake
   alias Bonfire.Posts
