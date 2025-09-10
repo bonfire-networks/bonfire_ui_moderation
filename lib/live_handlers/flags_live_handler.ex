@@ -22,11 +22,11 @@ defmodule Bonfire.Social.Flags.LiveHandler do
     current_user = current_user_required!(socket)
 
     subject =
-      if attrs["subject"] &&
-           Bonfire.Boundaries.can?(assigns(socket)[:__context__], :mediate, attrs["context"]),
-         do:
-           Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> ok_unwrap(nil),
-         else: current_user
+      if(
+        attrs["subject"] &&
+          Bonfire.Boundaries.can?(assigns(socket)[:__context__], :mediate, attrs["context"]),
+        do: Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> from_ok()
+      ) || current_user
 
     with _ <- Bonfire.Social.Flags.unflag(subject, id) do
       {:noreply,
@@ -41,11 +41,11 @@ defmodule Bonfire.Social.Flags.LiveHandler do
     current_user = current_user_required!(socket)
 
     subject =
-      if attrs["subject"] &&
-           Bonfire.Boundaries.can?(assigns(socket)[:__context__], :mediate, context),
-         do:
-           Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> ok_unwrap(nil),
-         else: current_user
+      if(
+        attrs["subject"] &&
+          Bonfire.Boundaries.can?(assigns(socket)[:__context__], :mediate, context),
+        do: Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> from_ok()
+      ) || current_user
 
     with {:ok, _} <- Bonfire.Social.Boosts.unboost(context, id),
          _ <- Bonfire.Social.Flags.unflag(subject, id) do
