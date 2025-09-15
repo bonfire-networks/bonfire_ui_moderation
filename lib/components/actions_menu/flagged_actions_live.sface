@@ -51,7 +51,10 @@
       {#match nil}
       {#match context_id}
         <li>
-          <Bonfire.UI.Common.OpenModalLive id={"remove_post_#{e(@object, :id, "")}"} no_actions>
+          <Bonfire.UI.Common.OpenModalLive
+            id={deterministic_dom_id(__MODULE__, e(@object, :id, ""), "remove_post", nil)}
+            no_actions
+          >
             <div>
               <h3 class="font-bold text-center text-lg">{l("Confirm you want to remove this post from the group")}!</h3>
               <button
@@ -74,7 +77,10 @@
         </li>
 
         <li>
-          <Bonfire.UI.Common.OpenModalLive id={"escalate_#{e(@object, :id, "")}"} no_actions>
+          <Bonfire.UI.Common.OpenModalLive
+            id={deterministic_dom_id(__MODULE__, e(@object, :id, ""), "escalate", nil)}
+            no_actions
+          >
             <div>
               <h3 class="font-bold text-center text-lg">{l("Confirm you want to remove this post from the group")}!</h3>
               <button
@@ -117,7 +123,7 @@
       <li class="focus:outline-hidden">
         <StatelessComponent
           module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
-          parent_id={"flagged-hide-#{@activity_component_id || id(@activity)}"}
+          parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-hide", nil)}
           object={id(@object)}
           label={l("this %{object}", object: e(@object_type_readable, l("object")))}
           scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
@@ -142,7 +148,7 @@
     <li>
       <StatelessComponent
         module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
-        parent_id={"flagged-block-#{@activity_component_id || id(@activity)}"}
+        parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-block", nil)}
         object={flagged_subject(@object || @activity)}
         peered={e(flagged_subject(@object || @activity), :peered, nil)}
         scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
@@ -173,7 +179,7 @@
       {!-- Block the flagger --}
       <StatelessComponent
         module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
-        parent_id={"flagger-block-#{@activity_component_id || id(@activity)}"}
+        parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagger-block", nil)}
         object={e(@activity, :subject, nil)}
         peered={e(@activity, :subject, :peered, nil)}
         scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
