@@ -1,5 +1,5 @@
 defmodule Bonfire.UI.Moderation.FlagsFeedTest do
-  use Bonfire.UI.Moderation.ConnCase, async: true
+  use Bonfire.UI.Moderation.ConnCase, async: System.get_env("TEST_UI_ASYNC") != "no"
 
   alias Bonfire.Social.Fake
   alias Bonfire.Posts
