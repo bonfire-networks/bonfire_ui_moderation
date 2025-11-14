@@ -36,8 +36,8 @@
 
     <:open_btn>
       <div class="flex items-center w-full gap-2 text-sm">
-        <#Icon :if={!@hide_icon} solid="Flag" class="w-4 h-4 shrink-0" />
-        <span class="truncate ellipsis">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
+        <span class="truncate flex-1 text-sm font-medium ellipsis text-left">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
+        <#Icon :if={!@hide_icon} iconify="ph:flag-duotone" class="w-5 h-5 shrink-0" />
       </div>
     </:open_btn>
     <:action_btns>
