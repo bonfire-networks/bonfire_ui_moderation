@@ -5,7 +5,13 @@ defmodule Bonfire.Social.Flags.LiveHandler do
   def handle_event("flag", %{"object_id" => id} = params, socket) do
     # debug(socket)
     with {:ok, current_user} <- current_user_or_remote_interaction(socket, l("flag"), id),
-         {:ok, _flag} <- Bonfire.Social.Flags.flag(current_user, id, comment: params["comment"]) do
+         {:ok, _flag} <-
+           Bonfire.Social.Flags.flag(
+             current_user,
+             id,
+             comment: params["comment"],
+             forward: params["forward"] == "true"
+           ) do
       Bonfire.UI.Common.OpenModalLive.close()
 
       {
