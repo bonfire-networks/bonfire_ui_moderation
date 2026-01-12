@@ -5,7 +5,7 @@
   </div>
   <ul
     tabindex="0"
-    class="dropdown-content w-64 menu bg-base-100 shadow border border-base-content/10 rounded-lg p-1"
+    class="dropdown-content w-64 menu bg-base-100 shadow border border-base-content/20 rounded-lg p-1"
   >
     <li :if={e(@activity, :subject, :id, nil) &&
       current_user_id(@__context__) != e(@activity, :subject, :id, nil)}>
@@ -111,7 +111,7 @@
   </div>
   <ul
     tabindex="0"
-    class="dropdown-content menu w-60 bg-base-100 shadow border border-base-content/10 rounded-lg p-1"
+    class="dropdown-content menu w-60 bg-base-100 shadow border border-base-content/20 rounded-lg p-1"
   >
     {#if @object_type != Bonfire.Data.Identity.User}
       {!-- Hide the object --}
