@@ -33,7 +33,10 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     # Login as me and flag the post
     conn
     |> visit("/feed/local")
-    |> click_button("[data-role=open_modal]", "Flag this post")
+    |> within("[data-object_id='#{post.id}']", fn session ->
+      session
+      |> click_button("[data-role=open_modal]", "Flag this post")
+    end)
     |> fill_in("Add a comment for the flag", with: "test")
     |> click_button("button[data-role=submit_flag]", "Flag this post")
     |> assert_has("[role=alert]", text: "flagged!")
@@ -53,8 +56,11 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     # Visit the local feed and check that we can see the post
     conn
     |> visit("/feed/local")
-    |> assert_has("article", text: content)
-    |> click_button("[data-role=open_modal]", "Flag this post")
+    |> assert_has("[data-object_id='#{post.id}']", text: content)
+    |> within("[data-object_id='#{post.id}']", fn session ->
+      session
+      |> click_button("[data-role=open_modal]", "Flag this post")
+    end)
     |> assert_has("button", text: "Already flagged")
   end
 
