@@ -128,6 +128,52 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     |> refute_has("article", text: alice.profile.name)
   end
 
+  test "Flag with comment is visible in my own flags list", %{
+    conn: conn,
+    me: me,
+    account: account,
+    alice: alice
+  } do
+    # Alice creates a post
+    content = "a post to flag with comment"
+    attrs = %{post_content: %{html_body: content}}
+    assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
+
+    # Flag the post with a comment
+    {:ok, _flag} = Bonfire.Social.Flags.flag(me, post.id, comment: "this is harmful content")
+
+    # Visit my flags page and verify the comment is visible
+    conn
+    |> visit("/settings/user/flags")
+    |> assert_has("article", text: content)
+    |> assert_has("article", text: "this is harmful content")
+  end
+
+  test "Admin can unflag on behalf of the original flagger", %{
+    account: account,
+    alice: alice,
+    bob: bob
+  } do
+    admin_account = fake_account!()
+    admin = fake_admin!(admin_account)
+
+    # Alice creates a post
+    content = "post to be unflagged by admin"
+    attrs = %{post_content: %{html_body: content}}
+    assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
+
+    # Bob flags the post
+    {:ok, _flag} = Bonfire.Social.Flags.flag(bob, post.id)
+
+    # Admin visits instance flags and unflag on bob's behalf
+    conn(user: admin, account: admin_account)
+    |> visit("/settings/instance/flags")
+    |> assert_has("article", text: content)
+    |> click_button("[data-role=unflag]", "Unflag")
+    |> assert_has("[role=alert]", text: "Unflagged!")
+    |> refute_has("article", text: content)
+  end
+
   # can add once we implement custom roles
   # NOTE: we do have `Bonfire.Boundaries.can?(context, :mediate, :instance)`
   # test "If I have the right instance permission, as a user I want to see and act upon the flags feed in admin settings" do

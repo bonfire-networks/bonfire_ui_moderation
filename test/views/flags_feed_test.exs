@@ -177,6 +177,48 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
     |> assert_has("article")
   end
 
+  test "Non-admin user cannot see instance flags page", %{
+    conn: conn,
+    me: me,
+    account: account,
+    alice: alice,
+    bob: bob
+  } do
+    # Bob flags Alice's post
+    content = "secret flagged post"
+    attrs = %{post_content: %{html_body: content}}
+    assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
+    {:ok, _flag} = Bonfire.Social.Flags.flag(bob, post.id)
+
+    # Non-admin user visits instance flags page
+    conn
+    |> visit("/settings/instance/flags")
+    |> refute_has("div[data-role=flagged_by]")
+    |> refute_has("article", text: content)
+  end
+
+  test "Moderator action menus appear for admin on flagged items in instance flags", %{
+    account: account,
+    alice: alice,
+    bob: bob
+  } do
+    admin_account = fake_account!()
+    admin = fake_admin!(admin_account)
+
+    # Alice creates a post and Bob flags it
+    content = "post with mod actions"
+    attrs = %{post_content: %{html_body: content}}
+    assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
+    {:ok, _flag} = Bonfire.Social.Flags.flag(bob, post.id)
+
+    # Admin visits instance flags page and sees moderation action menus
+    conn(user: admin, account: admin_account)
+    |> visit("/settings/instance/flags")
+    |> assert_has("article", text: content)
+    |> assert_has("[role=button]", text: "Mediate")
+    |> assert_has("[role=button]", text: "Take action")
+  end
+
   # can add once we implement custom roles
   # NOTE: we do have `Bonfire.Boundaries.can?(context, :mediate, :instance)`
   # test "If I have the right instance permission, as a user I want to see and act upon the flags feed in admin settings" do

@@ -96,7 +96,29 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       |> assert_has("[data-id=feed] article", text: flagger.profile.name)
       |> assert_has("[data-id=feed] article", text: "flagged")
 
-      # TODO: sanity checks that nobody else can do the same
+    end
+
+    test "non-admin user does not receive flag notifications" do
+      # Create non-admin user
+      carl_account = fake_account!()
+      carl = fake_user!(carl_account)
+
+      poster = fake_user!()
+
+      # Create a post
+      attrs = %{post_content: %{html_body: "some flagged post"}}
+
+      assert {:ok, post} =
+               Posts.publish(current_user: poster, post_attrs: attrs, boundary: "public")
+
+      # Another user flags the post
+      flagger = fake_user!()
+      Flags.flag(flagger, post)
+
+      # Non-admin carl should not see flag notifications
+      conn(user: carl, account: carl_account)
+      |> visit("/notifications")
+      |> refute_has("[data-id=feed] article", text: "flagged")
     end
   end
 end
