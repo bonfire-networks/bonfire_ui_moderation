@@ -95,7 +95,6 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       |> assert_has_or_open_browser("[data-id=feed] article", text: "epic html post")
       |> assert_has("[data-id=feed] article", text: flagger.profile.name)
       |> assert_has("[data-id=feed] article", text: "flagged")
-
     end
 
     test "non-admin user does not receive flag notifications" do
