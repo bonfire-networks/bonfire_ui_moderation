@@ -1,11 +1,18 @@
-<div class="dropdown">
-  <div tabindex="0" role="button" class="btn btn-secondary btn-soft btn-sm">
-    <#Icon iconify="game-icons:heart-plus" class="w-5 h-5" />
+{!-- Mediate dropdown --}
+<div
+  data-position="bottom-end"
+  phx-hook="Tooltip"
+  id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "mediate-menu", nil)}
+  class="relative"
+>
+  <label tabindex="0" role="button" class="tooltip-button btn btn-secondary btn-soft btn-sm">
+    <#Icon iconify="ph:chats-teardrop-duotone" class="w-5 h-5" />
     {l("Mediate")}
-  </div>
+  </label>
+
   <ul
     tabindex="0"
-    class="dropdown-content w-64 menu bg-base-100 shadow border border-base-content/10 rounded-lg p-1"
+    class="tooltip z-dropdown menu w-72 bg-base-100 shadow border border-base-content/10 rounded-lg p-1 absolute top-0 right-0 hidden"
   >
     <li :if={e(@activity, :subject, :id, nil) &&
       current_user_id(@__context__) != e(@activity, :subject, :id, nil)}>
@@ -82,7 +89,7 @@
             no_actions
           >
             <div>
-              <h3 class="font-bold text-center text-lg">{l("Confirm you want to remove this post from the group")}!</h3>
+              <h3 class="font-bold text-center text-lg">{l("Confirm you want to escalate this to instance moderators")}!</h3>
               <button
                 phx-click="Bonfire.Social.Feeds:publish"
                 phx-target={"##{@activity_component_id || "root"}"}
@@ -104,23 +111,24 @@
   </ul>
 </div>
 
-<div class="dropdown">
-  <div tabindex="0" role="button" class="btn btn-warning btn-soft btn-sm">
-    <#Icon iconify="heroicons-solid:ban" class="w-5 h-5 stroke-1" />
+{!-- Take action dropdown --}
+<div
+  data-position="bottom-end"
+  phx-hook="Tooltip"
+  id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "action-menu", nil)}
+  class="relative"
+>
+  <label tabindex="0" role="button" class="tooltip-button btn btn-warning btn-soft btn-sm">
+    <#Icon iconify="ph:shield-duotone" class="w-5 h-5" />
     {l("Take action")}
-  </div>
+  </label>
+
   <ul
     tabindex="0"
-    class="dropdown-content menu w-60 bg-base-100 shadow border border-base-content/10 rounded-lg p-1"
+    class="tooltip z-dropdown menu w-72 bg-base-100 shadow border border-base-content/10 rounded-lg p-1 absolute top-0 right-0 hidden"
   >
     {#if @object_type != Bonfire.Data.Identity.User}
-      {!-- Hide the object --}
-      {!-- 
-            # WIP - TODO: pass the silenced/ghosted/blocked booleans so it isn't re-queried by BlockButtonLive before enabling:
-
-        --}
-
-      <li class="focus:outline-hidden">
+      <li>
         <StatelessComponent
           module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
           parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-hide", nil)}
@@ -140,24 +148,12 @@
           creator_id={id(@creator)}
           object_type_readable={@object_type_readable}
           parent_id={id(@activity)}
-          open_btn_class="flex items-center w-full gap-2 text-sm"
+          open_btn_class="flex items-center w-full gap-2 text-sm text-error"
         />
       </li>
-    {/if}
 
-    <li>
-      <StatelessComponent
-        module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
-        parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-block", nil)}
-        object={flagged_subject(@object || @activity)}
-        peered={e(flagged_subject(@object || @activity), :peered, nil)}
-        scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
-        label={if @object_type != Bonfire.Data.Identity.User, do: l("the original author"), else: l("the user")}
-        type={:block}
-        class="flex items-center w-full gap-2 text-sm"
-        with_icon
-      />
-    </li>
+      <li class="menu-divider"></li>
+    {/if}
 
     <li>
       <button
@@ -170,13 +166,28 @@
         phx-value-subject={e(@activity, :subject, :id, "")}
         class="flex items-center w-full gap-2 text-sm"
       >
-        <#Icon iconify="fluent:flag-off-16-filled" class="w-5 h-5 stroke-1" />
-        <span class="">{l("Unflag")}</span>
+        <#Icon iconify="ph:flag-duotone" class="w-5 h-5" />
+        <span>{l("Unflag")}</span>
       </button>
     </li>
 
+    <li class="menu-divider"></li>
+
     <li>
-      {!-- Block the flagger --}
+      <StatelessComponent
+        module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
+        parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-block", nil)}
+        object={flagged_subject(@object || @activity)}
+        peered={e(flagged_subject(@object || @activity), :peered, nil)}
+        scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
+        label={if @object_type != Bonfire.Data.Identity.User, do: l("the original author"), else: l("the user")}
+        type={:block}
+        class="flex items-center w-full gap-2 text-sm text-error"
+        with_icon
+      />
+    </li>
+
+    <li>
       <StatelessComponent
         module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
         parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagger-block", nil)}
@@ -185,47 +196,9 @@
         scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
         label={l("the flagger")}
         type={:block}
-        class="flex items-center w-full gap-2 text-sm"
+        class="flex items-center w-full gap-2 text-sm text-error"
         with_icon
       />
     </li>
   </ul>
 </div>
-
-{!-- 
-<button
-  phx-click="Bonfire.Social.Flags:unflag"
-  phx-target={"##{@activity_component_id || "root"}"}
-  phx-value-id={e(@object, :id, "")}
-  phx-value-context={e(@activity, :tree, :parent_id, nil)}
-  data-role="unflag"
-  title={l("Unflag")}
-  phx-value-subject={e(@activity, :subject, :id, "")}
-  class="flex btn btn-sm"
->
-  <#Icon iconify="fluent:flag-off-16-filled" class="w-5 h-5 stroke-1" />
-  <span class="">{l("Unflag")}</span>
-</button>
-
-<LinkLive 
-      to={@permalink}
-    >
-      <button
-        class="normal-case btn btn-sm">
-        {l "View"}
-      </button>
-    </LinkLive> 
-    
- <Bonfire.UI.Social.Activity.MoreActionsLive
-      object={@object} 
-      object_type={@object_type} 
-      activity={@activity} 
-      verb={@verb}
-      object_type_readable={@object_type_readable}
-      showing_within={@showing_within}
-    >
-
-      <:extra_items>
-
-      </:extra_items>
-    </Bonfire.UI.Social.Activity.MoreActionsLive> --}
