@@ -6,7 +6,7 @@
   class="relative"
 >
   <label tabindex="0" role="button" class="tooltip-button btn btn-secondary btn-soft btn-sm">
-    <#Icon iconify="ph:chats-teardrop-duotone" class="w-5 h-5" />
+    <#Icon iconify="ph:tray-duotone" class="w-5 h-5" />
     {l("Mediate")}
   </label>
 
