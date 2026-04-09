@@ -1,7 +1,13 @@
 {#if !current_user_id(@__context__)}
   <li>
     <a
-      href={"/remote_interaction?type=flag&name=#{l("this activity or user")}&url=#{@permalink || URIs.canonical_url(@object)}"}
+      href={maybe_apply(
+        Bonfire.UI.Me.RemoteInteractionLive,
+        :generate_url,
+        ["flag", l("this activity or user"), @permalink || URIs.canonical_url(@object), @__context__],
+        fallback_return: "/login"
+      )}
+      target="_top"
       class="flex items-center w-full gap-2 text-sm text-base-content"
     >
       <#Icon :if={!@hide_icon} solid="Flag" class="w-4 h-4 shrink-0" />
