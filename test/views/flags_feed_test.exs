@@ -215,8 +215,8 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
     conn(user: admin, account: admin_account)
     |> visit("/settings/instance/flags")
     |> assert_has("article", text: content)
-    |> assert_has("[role=button]", text: "Mediate")
-    |> assert_has("[role=button]", text: "Take action")
+    |> assert_has("button", text: "Mediate")
+    |> assert_has("button", text: "Take action")
   end
 
   # can add once we implement custom roles

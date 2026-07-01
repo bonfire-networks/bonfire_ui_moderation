@@ -1,3 +1,4 @@
+<div class="flex items-center gap-2">
 {!-- Mediate dropdown --}
 <Dropdown
   id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "mediate-menu", nil)}
@@ -190,3 +191,4 @@
     />
   </li>
 </Dropdown>
+</div>

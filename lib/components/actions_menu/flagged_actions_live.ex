@@ -1,5 +1,5 @@
 defmodule Bonfire.UI.Moderation.FlaggedActionsLive do
-  use Bonfire.UI.Common.Web, :stateless_component
+  use Bonfire.UI.Common.Web, :stateful_component
   # alias Bonfire.UI.Common.OpenModalLive
   # import Bonfire.UI.Social.Integration
 
