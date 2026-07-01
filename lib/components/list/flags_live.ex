@@ -1,7 +1,7 @@
 defmodule Bonfire.UI.Moderation.FlagsLive do
   use Bonfire.UI.Common.Web, :stateful_component
 
-  declare_extension("UI for moderation",
+  declare_extension(l("UI for moderation"),
     icon: "bxs:flag-alt",
     emoji: "🚩",
     description:
