@@ -1,21 +1,35 @@
 {!-- Mediate dropdown --}
-<div
-  data-position="bottom-end"
-  phx-hook="Tooltip"
+<Dropdown
   id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "mediate-menu", nil)}
-  class="relative"
+  position="bottom-end"
+  trigger_class="btn btn-secondary btn-soft btn-sm"
+  label={l("Mediate")}
 >
-  <label tabindex="0" role="button" class="tooltip-button btn btn-secondary btn-soft btn-sm">
-    <#Icon iconify="ph:tray-duotone" class="w-5 h-5" />
+  <:trigger>
+    <#Icon iconify="ph:tray-fill" class="w-5 h-5" />
     {l("Mediate")}
-  </label>
+  </:trigger>
+  <li :if={e(@activity, :subject, :id, nil) &&
+    current_user_id(@__context__) != e(@activity, :subject, :id, nil)}>
+    <Bonfire.UI.Common.SmartInputButtonLive
+      create_object_type={:message}
+      hide_icon
+      smart_input_opts={%{
+        create_object_type: :message,
+        recipients_editable: true,
+        to_circles: [
+          {id(e(@activity, :subject, :character, :id, nil)),
+           ed(@activity, :subject, :character, :username, "")}
+        ]
+      }}
+      prompt={l("Message the flagger")}
+      class="!flex items-center gap-2 text-sm"
+    />
+  </li>
 
-  <ul
-    tabindex="0"
-    class="tooltip z-dropdown menu w-72 bg-base-100 shadow border border-base-content/10 rounded-lg p-1 absolute top-0 right-0 hidden"
-  >
-    <li :if={e(@activity, :subject, :id, nil) &&
-      current_user_id(@__context__) != e(@activity, :subject, :id, nil)}>
+  <li :if={current_user_id(@__context__) != id(flagged_character(@object || @activity)) &&
+    e(flagged_character(@object || @activity), :id, nil) != e(@activity, :subject, :id, nil)}>
+    <div class="">
       <Bonfire.UI.Common.SmartInputButtonLive
         create_object_type={:message}
         hide_icon
@@ -23,182 +37,156 @@
           create_object_type: :message,
           recipients_editable: true,
           to_circles: [
-            {id(e(@activity, :subject, :character, :id, nil)),
-             ed(@activity, :subject, :character, :username, "")}
+            {id(e(flagged_character(@object), nil)),
+             e(flagged_character(@object || @activity), :username, nil)}
           ]
         }}
-        prompt={l("Message the flagger")}
+        prompt={if @object_type != Bonfire.Data.Identity.User,
+          do: l("Message the original author"),
+          else: l("Message the user")}
         class="!flex items-center gap-2 text-sm"
+      />
+    </div>
+  </li>
+
+  {#case e(@activity, :tree, :parent_id, nil)}
+    {#match nil}
+    {#match context_id}
+      <li>
+        <Bonfire.UI.Common.OpenModalLive
+          id={deterministic_dom_id(__MODULE__, e(@object, :id, ""), "remove_post", nil)}
+          no_actions
+        >
+          <div>
+            <h3 class="font-bold text-center text-lg">{l("Confirm you want to remove this post from the group")}!</h3>
+            <button
+              phx-click="Bonfire.Social.Flags:unpublish"
+              phx-target={"##{@activity_component_id || "root"}"}
+              phx-value-id={e(@object, :id, "")}
+              phx-value-context={context_id}
+              phx-value-subject={e(@activity, :subject, :id, "")}
+              data-role="unpublish"
+              class="btn w-full btn-error rounded-full normal-case mt-3"
+            >{l("Remove")}</button>
+          </div>
+
+          <:open_btn>
+            <div class="py-1">
+              {l("Remove this post from the group")}
+            </div>
+          </:open_btn>
+        </Bonfire.UI.Common.OpenModalLive>
+      </li>
+
+      <li>
+        <Bonfire.UI.Common.OpenModalLive
+          id={deterministic_dom_id(__MODULE__, e(@object, :id, ""), "escalate", nil)}
+          no_actions
+        >
+          <div>
+            <h3 class="font-bold text-center text-lg">{l("Confirm you want to escalate this to instance moderators")}!</h3>
+            <button
+              phx-click="Bonfire.Social.Feeds:publish"
+              phx-target={"##{@activity_component_id || "root"}"}
+              phx-value-to="instance_moderators"
+              phx-value-id={id(@activity)}
+              data-role="escalate"
+              class="btn w-full btn-info rounded-full normal-case mt-3"
+            >{l("Escalate to instance moderators")}</button>
+          </div>
+
+          <:open_btn>
+            <div class="py-1">
+              {l("Escalate to instance moderators")}
+            </div>
+          </:open_btn>
+        </Bonfire.UI.Common.OpenModalLive>
+      </li>
+  {/case}
+</Dropdown>
+
+{!-- Take action dropdown --}
+<Dropdown
+  id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "action-menu", nil)}
+  position="bottom-end"
+  trigger_class="btn btn-warning btn-soft btn-sm"
+  label={l("Take action")}
+>
+  <:trigger>
+    <#Icon iconify="ph:shield-fill" class="w-5 h-5" />
+    {l("Take action")}
+  </:trigger>
+  {#if @object_type != Bonfire.Data.Identity.User}
+    <li>
+      <StatelessComponent
+        module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
+        parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-hide", nil)}
+        object={id(@object)}
+        label={l("this %{object}", object: e(@object_type_readable, l("object")))}
+        scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
+        type={:hide}
+        class="flex items-center w-full gap-2 text-sm"
       />
     </li>
 
-    <li :if={current_user_id(@__context__) != id(flagged_character(@object || @activity)) &&
-      e(flagged_character(@object || @activity), :id, nil) != e(@activity, :subject, :id, nil)}>
-      <div class="">
-        <Bonfire.UI.Common.SmartInputButtonLive
-          create_object_type={:message}
-          hide_icon
-          smart_input_opts={%{
-            create_object_type: :message,
-            recipients_editable: true,
-            to_circles: [
-              {id(e(flagged_character(@object), nil)),
-               e(flagged_character(@object || @activity), :username, nil)}
-            ]
-          }}
-          prompt={if @object_type != Bonfire.Data.Identity.User,
-            do: l("Message the original author"),
-            else: l("Message the user")}
-          class="!flex items-center gap-2 text-sm"
-        />
-      </div>
-    </li>
-
-    {#case e(@activity, :tree, :parent_id, nil)}
-      {#match nil}
-      {#match context_id}
-        <li>
-          <Bonfire.UI.Common.OpenModalLive
-            id={deterministic_dom_id(__MODULE__, e(@object, :id, ""), "remove_post", nil)}
-            no_actions
-          >
-            <div>
-              <h3 class="font-bold text-center text-lg">{l("Confirm you want to remove this post from the group")}!</h3>
-              <button
-                phx-click="Bonfire.Social.Flags:unpublish"
-                phx-target={"##{@activity_component_id || "root"}"}
-                phx-value-id={e(@object, :id, "")}
-                phx-value-context={context_id}
-                phx-value-subject={e(@activity, :subject, :id, "")}
-                data-role="unpublish"
-                class="btn w-full btn-error rounded-full normal-case mt-3"
-              >{l("Remove")}</button>
-            </div>
-
-            <:open_btn>
-              <div class="py-1">
-                {l("Remove this post from the group")}
-              </div>
-            </:open_btn>
-          </Bonfire.UI.Common.OpenModalLive>
-        </li>
-
-        <li>
-          <Bonfire.UI.Common.OpenModalLive
-            id={deterministic_dom_id(__MODULE__, e(@object, :id, ""), "escalate", nil)}
-            no_actions
-          >
-            <div>
-              <h3 class="font-bold text-center text-lg">{l("Confirm you want to escalate this to instance moderators")}!</h3>
-              <button
-                phx-click="Bonfire.Social.Feeds:publish"
-                phx-target={"##{@activity_component_id || "root"}"}
-                phx-value-to="instance_moderators"
-                phx-value-id={id(@activity)}
-                data-role="escalate"
-                class="btn w-full btn-info rounded-full normal-case mt-3"
-              >{l("Escalate to instance moderators")}</button>
-            </div>
-
-            <:open_btn>
-              <div class="py-1">
-                {l("Escalate to instance moderators")}
-              </div>
-            </:open_btn>
-          </Bonfire.UI.Common.OpenModalLive>
-        </li>
-    {/case}
-  </ul>
-</div>
-
-{!-- Take action dropdown --}
-<div
-  data-position="bottom-end"
-  phx-hook="Tooltip"
-  id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "action-menu", nil)}
-  class="relative"
->
-  <label tabindex="0" role="button" class="tooltip-button btn btn-warning btn-soft btn-sm">
-    <#Icon iconify="ph:shield-duotone" class="w-5 h-5" />
-    {l("Take action")}
-  </label>
-
-  <ul
-    tabindex="0"
-    class="tooltip z-dropdown menu w-72 bg-base-100 shadow border border-base-content/10 rounded-lg p-1 absolute top-0 right-0 hidden"
-  >
-    {#if @object_type != Bonfire.Data.Identity.User}
-      <li>
-        <StatelessComponent
-          module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
-          parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-hide", nil)}
-          object={id(@object)}
-          label={l("this %{object}", object: e(@object_type_readable, l("object")))}
-          scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
-          type={:hide}
-          class="flex items-center w-full gap-2 text-sm"
-        />
-      </li>
-
-      <li>
-        <StatelessComponent
-          module={maybe_component(Bonfire.UI.Social.Activity.DeleteObjectLive, @__context__)}
-          object={@object}
-          hide_icon
-          creator_id={id(@creator)}
-          object_type_readable={@object_type_readable}
-          parent_id={id(@activity)}
-          open_btn_class="flex items-center w-full gap-2 text-sm text-error"
-        />
-      </li>
-
-      <li class="menu-divider" />
-    {/if}
-
     <li>
-      <button
-        phx-click="Bonfire.Social.Flags:unflag"
-        phx-target={"##{@activity_component_id || "root"}"}
-        phx-value-id={e(@object, :id, "")}
-        phx-value-context={e(@activity, :tree, :parent_id, nil)}
-        data-role="unflag"
-        title={l("Unflag")}
-        phx-value-subject={e(@activity, :subject, :id, "")}
-        class="flex items-center w-full gap-2 text-sm"
-      >
-        <#Icon iconify="ph:flag-duotone" class="w-5 h-5" />
-        <span>{l("Unflag")}</span>
-      </button>
+      <StatelessComponent
+        module={maybe_component(Bonfire.UI.Social.Activity.DeleteObjectLive, @__context__)}
+        object={@object}
+        hide_icon
+        creator_id={id(@creator)}
+        object_type_readable={@object_type_readable}
+        parent_id={id(@activity)}
+        open_btn_class="flex items-center w-full gap-2 text-sm text-error"
+      />
     </li>
 
     <li class="menu-divider" />
+  {/if}
 
-    <li>
-      <StatelessComponent
-        module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
-        parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-block", nil)}
-        object={flagged_subject(@object || @activity)}
-        peered={e(flagged_subject(@object || @activity), :peered, nil)}
-        scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
-        label={if @object_type != Bonfire.Data.Identity.User, do: l("the original author"), else: l("the user")}
-        type={:block}
-        class="flex items-center w-full gap-2 text-sm text-error"
-        with_icon
-      />
-    </li>
+  <li>
+    <button
+      phx-click="Bonfire.Social.Flags:unflag"
+      phx-target={"##{@activity_component_id || "root"}"}
+      phx-value-id={e(@object, :id, "")}
+      phx-value-context={e(@activity, :tree, :parent_id, nil)}
+      data-role="unflag"
+      title={l("Unflag")}
+      phx-value-subject={e(@activity, :subject, :id, "")}
+      class="flex items-center w-full gap-2 text-sm"
+    >
+      <#Icon iconify="ph:flag-fill" class="w-5 h-5" />
+      <span>{l("Unflag")}</span>
+    </button>
+  </li>
 
-    <li>
-      <StatelessComponent
-        module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
-        parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagger-block", nil)}
-        object={e(@activity, :subject, nil)}
-        peered={e(@activity, :subject, :peered, nil)}
-        scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
-        label={l("the flagger")}
-        type={:block}
-        class="flex items-center w-full gap-2 text-sm text-error"
-        with_icon
-      />
-    </li>
-  </ul>
-</div>
+  <li class="menu-divider" />
+
+  <li>
+    <StatelessComponent
+      module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
+      parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-block", nil)}
+      object={flagged_subject(@object || @activity)}
+      peered={e(flagged_subject(@object || @activity), :peered, nil)}
+      scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
+      label={if @object_type != Bonfire.Data.Identity.User, do: l("the original author"), else: l("the user")}
+      type={:block}
+      class="flex items-center w-full gap-2 text-sm text-error"
+      with_icon
+    />
+  </li>
+
+  <li>
+    <StatelessComponent
+      module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
+      parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagger-block", nil)}
+      object={e(@activity, :subject, nil)}
+      peered={e(@activity, :subject, :peered, nil)}
+      scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
+      label={l("the flagger")}
+      type={:block}
+      class="flex items-center w-full gap-2 text-sm text-error"
+      with_icon
+    />
+  </li>
+</Dropdown>

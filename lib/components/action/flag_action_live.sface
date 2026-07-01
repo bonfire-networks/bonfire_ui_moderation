@@ -8,10 +8,10 @@
         fallback_return: "/login"
       )}
       target="_top"
-      class="flex items-center w-full gap-2 text-sm text-base-content"
+      class="flex items-center justify-between w-full gap-2 text-sm text-base-content"
     >
-      <#Icon :if={!@hide_icon} solid="Flag" class="w-4 h-4 shrink-0" />
-      <span class="truncate ellipsis">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
+      <span class="flex-1 truncate ellipsis text-sm">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
+      <#Icon :if={!@hide_icon} iconify="ph:flag-duotone" class="w-5 h-5 shrink-0" />
     </a>
   </li>
 {#elseif id(@flagged)}
@@ -55,7 +55,7 @@
           />
           <div class="flex flex-col gap-1.5 flex-1 min-w-0 overflow-hidden">
             <span class="text-sm font-medium text-base-content break-words">{l("Forward to remote instance")}</span>
-            <span class="text-xs text-base-content/70 break-words leading-relaxed">{l(
+            <span class="text-xs text-muted break-words leading-relaxed">{l(
                 "If checked, this flag will be sent to moderators of the remote instance where this content originated. Only enable this if you trust the remote instance's moderators."
               )}</span>
           </div>
@@ -64,8 +64,8 @@
     </div>
 
     <:open_btn>
-      <div class="flex items-center w-full gap-2 text-sm">
-        <span class="text-left" truncate ellipsis max-w-[210px] font-medium text-sm">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
+      <div class="flex items-center justify-between w-full gap-2 text-sm text-base-content">
+        <span class="flex-1 text-left truncate ellipsis text-sm">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
         <#Icon :if={!@hide_icon} iconify="ph:flag-duotone" class="w-5 h-5 shrink-0" />
       </div>
     </:open_btn>
@@ -97,7 +97,7 @@
   <div
     phx-click="Bonfire.Social.Flags:flag"
     phx-value-id={e(@object, :id, "")}
-    class="flex items-center gap-2 text-sm text-base-content/70"
+    class="flex items-center gap-2 text-sm text-muted"
   >
     <#Icon :if={!@hide_icon} solid="Flag" class="w-4 h-4 shrink-0" />
     <span class="truncate ellipsis">{e(@label, l("Flag"))}</span>
