@@ -25,7 +25,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
 
   test "Flagging a post works", %{conn: conn, me: me, account: account, alice: alice} do
     # Alice creates a post
-    Process.put(:feed_live_update_many_preload_mode, :inline)
+    Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
     content = "here is an epic html post"
     attrs = %{post_content: %{html_body: content}}
     assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
@@ -44,7 +44,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
 
   test "If I already flagged an activity, I want to be told rather than be able to attempt flagging twice",
        %{conn: conn, me: me, account: account, alice: alice} do
-    Process.put(:feed_live_update_many_preload_mode, :inline)
+    Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
     # Alice creates a post
     content = "here is an epic html post"
     attrs = %{post_content: %{html_body: content}}
@@ -65,7 +65,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
   end
 
   test "Flagging a user works", %{conn: conn, me: me, account: account, carl: carl} do
-    Process.put(:feed_live_update_many_preload_mode, :inline)
+    Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
     # Alice creates a post
     content = "here is an epic html post"
     attrs = %{post_content: %{html_body: content}}
@@ -84,7 +84,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
       |> click_button("button[data-role=submit_flag]", "Flag #{carl.profile.name}")
       |> assert_has("[role=alert]", text: "flagged!")
 
-    Process.put(:feed_live_update_many_preload_mode, :async_actions)
+    Process.put([:bonfire, :feed_live_update_many_preload_mode], :async_actions)
 
     session
     |> visit("/settings/user/flags")
