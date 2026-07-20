@@ -11,7 +11,7 @@ defmodule Bonfire.UI.Moderation.FlaggedActionsLive do
   prop permalink, :string
   prop showing_within, :atom, default: nil
   prop hide_reply, :boolean
-  prop viewing_main_object, :boolean
+  prop viewing_main_object, :boolean, default: false
   prop object_type_readable, :any
   prop flagged, :any
   prop activity_component_id, :string, default: nil
