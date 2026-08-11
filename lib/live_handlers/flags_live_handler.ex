@@ -4,7 +4,7 @@ defmodule Bonfire.Social.Flags.LiveHandler do
   # flag in LV
   def handle_event("flag", %{"object_id" => id} = params, socket) do
     # debug(socket)
-    with {:ok, current_user} <- current_user_or_remote_interaction(socket, l("flag"), id),
+    with {:ok, current_user} <- current_user_or_remote_interaction(socket, "flag", id),
          {:ok, _flag} <-
            Bonfire.Social.Flags.flag(
              current_user,
