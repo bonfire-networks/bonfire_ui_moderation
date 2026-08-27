@@ -1,7 +1,12 @@
 {#if !current_user_id(@__context__)}
   <li>
     <a
-      href={"#{path(@object)}/interact/flag"}
+      href={Bonfire.UI.Common.guest_interaction_url(
+        "flag",
+        l("this %{object}", object: @object_type || l("object")),
+        @object,
+        @__context__
+      )}
       target="_top"
       class="flex items-center justify-between w-full gap-2 text-sm text-base-content"
     >
