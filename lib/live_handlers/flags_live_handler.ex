@@ -53,7 +53,14 @@ defmodule Bonfire.Social.Flags.LiveHandler do
         do: Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> from_ok()
       ) || current_user
 
-    with {:ok, _} <- Bonfire.Social.Boosts.unboost(context, id),
+    # the context checks the caller moderates the group: the button is only shown to moderators, but anyone can send this event
+    with {:ok, _} <-
+           maybe_apply(
+             Bonfire.Classify.Categories,
+             :remove_post_from_group,
+             [current_user, context, id],
+             fallback_return: {:error, :not_found}
+           ),
          _ <- Bonfire.Social.Flags.unflag(subject, id) do
       {:noreply,
        socket
