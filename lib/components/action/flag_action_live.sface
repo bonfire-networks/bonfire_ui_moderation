@@ -78,7 +78,7 @@
           phx-click="close"
           phx-target="#modal"
           type="button"
-          class="grow btn btn-sm btn-disabled normal-case rounded"
+          class="grow btn btn-sm btn-disabled normal-case"
         >
           {l("Already flagged")}
         </button>

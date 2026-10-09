@@ -59,7 +59,7 @@
             no_actions
           >
             <div>
-              <h3 class="font-bold text-center text-lg">{l("Confirm you want to remove this post from the group")}!</h3>
+              <h3 class="text-center type-heading">{l("Confirm you want to remove this post from the group")}!</h3>
               <button
                 phx-click="Bonfire.Social.Flags:unpublish"
                 phx-target={"##{@activity_component_id || "root"}"}
@@ -85,7 +85,7 @@
             no_actions
           >
             <div>
-              <h3 class="font-bold text-center text-lg">{l("Confirm you want to escalate this to instance moderators")}!</h3>
+              <h3 class="text-center type-heading">{l("Confirm you want to escalate this to instance moderators")}!</h3>
               <button
                 phx-click="Bonfire.Social.Feeds:publish"
                 phx-target={"##{@activity_component_id || "root"}"}
