@@ -7,7 +7,7 @@
     label={l("Mediate")}
   >
     <:trigger>
-      <#Icon iconify="ph:tray-fill" class="w-5 h-5" />
+      <#Icon iconify="ph:tray-fill" class="size-5" />
       {l("Mediate")}
     </:trigger>
     <li :if={e(@activity, :subject, :id, nil) &&
@@ -114,7 +114,7 @@
     label={l("Take action")}
   >
     <:trigger>
-      <#Icon iconify="ph:shield-fill" class="w-5 h-5" />
+      <#Icon iconify="ph:shield-fill" class="size-5" />
       {l("Take action")}
     </:trigger>
     {#if @object_type != Bonfire.Data.Identity.User}
@@ -156,7 +156,7 @@
         phx-value-subject={e(@activity, :subject, :id, "")}
         class="flex items-center w-full gap-2 text-sm"
       >
-        <#Icon iconify="ph:flag-fill" class="w-5 h-5" />
+        <#Icon iconify="ph:flag-fill" class="size-5" />
         <span>{l("Unflag")}</span>
       </button>
     </li>

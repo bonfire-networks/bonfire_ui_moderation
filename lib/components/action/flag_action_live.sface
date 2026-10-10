@@ -11,7 +11,7 @@
       class="flex items-center justify-between w-full gap-2 text-sm text-base-content"
     >
       <span class="flex-1 truncate ellipsis text-sm">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
-      <#Icon :if={!@hide_icon} iconify="ph:flag-duotone" class="w-5 h-5 shrink-0" />
+      <#Icon :if={!@hide_icon} iconify="ph:flag-duotone" class="size-5 shrink-0" />
     </a>
   </li>
 {#elseif id(@flagged)}
@@ -66,7 +66,7 @@
     <:open_btn>
       <div class="flex items-center justify-between w-full gap-2 text-sm text-base-content">
         <span class="flex-1 text-left truncate ellipsis text-sm">{e(@label, l("Flag %{user_or_thing}", user_or_thing: @object_type))}</span>
-        <#Icon :if={!@hide_icon} iconify="ph:flag-duotone" class="w-5 h-5 shrink-0" />
+        <#Icon :if={!@hide_icon} iconify="ph:flag-duotone" class="size-5 shrink-0" />
       </div>
     </:open_btn>
     <:action_btns>
@@ -99,7 +99,7 @@
     phx-value-id={e(@object, :id, "")}
     class="flex items-center gap-2 text-sm text-muted"
   >
-    <#Icon :if={!@hide_icon} solid="Flag" class="w-4 h-4 shrink-0" />
+    <#Icon :if={!@hide_icon} solid="Flag" class="size-4 shrink-0" />
     <span class="truncate ellipsis">{e(@label, l("Flag"))}</span>
   </div>
 {/if} --}
