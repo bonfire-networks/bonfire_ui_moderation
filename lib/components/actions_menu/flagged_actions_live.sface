@@ -163,19 +163,15 @@
 
     <li class="menu-divider" />
 
-    <li>
-      <StatelessComponent
-        module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
-        parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-block", nil)}
-        object={flagged_subject(@object || @activity)}
-        peered={e(flagged_subject(@object || @activity), :peered, nil)}
-        scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
-        label={if @object_type != Bonfire.Data.Identity.User, do: l("the original author"), else: l("the user")}
-        type={:block}
-        class="flex items-center w-full gap-2 text-sm text-error"
-        with_icon
-      />
-    </li>
+    {!-- ghost, silence and block, each also on behalf of the group the flagged thing is in (`scope`) for its moderators --}
+    <StatelessComponent
+      module={maybe_component(Bonfire.UI.Boundaries.BlockMenuButtonsLive, @__context__)}
+      parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-block", nil)}
+      object={flagged_subject(@object || @activity)}
+      peered={e(flagged_subject(@object || @activity), :peered, nil)}
+      scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
+      with_icon
+    />
 
     <li>
       <StatelessComponent
