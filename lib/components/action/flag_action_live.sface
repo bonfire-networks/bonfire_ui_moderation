@@ -39,28 +39,56 @@
         )}
       />
 
-      <div :if={@is_remote} class="form-control mt-4 w-full">
-        <label class="label cursor-pointer justify-start gap-3 items-start p-0">
-          <input
-            type="checkbox"
-            name="forward"
-            id="forward-flag"
-            value="true"
-            class="checkbox checkbox-sm mt-0.5 shrink-0"
-            checked={Settings.get(
-              [Bonfire.Social.Flags, :forward_by_default],
-              false,
-              @__context__
-            )}
-          />
-          <div class="flex flex-col gap-1.5 flex-1 min-w-0 overflow-hidden">
-            <span class="text-sm font-medium text-base-content break-words">{l("Forward to remote instance")}</span>
-            <span class="text-xs text-muted break-words leading-relaxed">{l(
-                "If checked, this flag will be sent to moderators of the remote instance where this content originated. Only enable this if you trust the remote instance's moderators."
-              )}</span>
+      {!-- the group on another instance that this is in, if any: a local group's moderators see reports on its moderation page. Looked up once, when the form opens, since the modal renders this only then --}
+      {#case Bonfire.Social.Flags.remote_group_for_report(@object)}
+        {#match remote_group}
+          <div :if={@is_remote} class="form-control mt-4 w-full">
+            <label class="label whitespace-normal cursor-pointer justify-start gap-3 items-start p-0">
+              <input
+                type="checkbox"
+                name="forward"
+                id="forward-flag"
+                value="true"
+                class="checkbox checkbox-sm mt-0.5 shrink-0"
+                checked={Settings.get(
+                  [Bonfire.Social.Flags, :forward_by_default],
+                  false,
+                  @__context__
+                )}
+              />
+              <div class="flex flex-col gap-1.5 flex-1 min-w-0 overflow-hidden">
+                <span class="text-sm font-medium text-base-content break-words">{l("Forward anonymously to remote moderators")}</span>
+                <span class="text-xs text-muted break-words leading-relaxed">{if remote_group,
+                    do:
+                      l(
+                        "Sends this report, without your name, to the moderators of the instance it came from and of the group it's in. Only enable this if you trust them to read your report."
+                      ),
+                    else:
+                      l(
+                        "Sends this report, without your name, to the moderators of the instance it came from. Only enable this if you trust them to read your report."
+                      )}</span>
+              </div>
+            </label>
           </div>
-        </label>
-      </div>
+
+          <div :if={remote_group} class="form-control mt-4 w-full">
+            <label class="label whitespace-normal cursor-pointer justify-start gap-3 items-start p-0">
+              <input
+                type="checkbox"
+                name="forward_to_group"
+                id="forward-flag-group"
+                value="true"
+                class="checkbox checkbox-sm mt-0.5 shrink-0"
+              />
+              <div class="flex flex-col gap-1.5 flex-1 min-w-0 overflow-hidden">
+                <span class="text-sm font-medium text-base-content break-words">{l("Include my name for the group's moderators")}</span>
+                <span class="text-xs text-muted break-words leading-relaxed">{l(
+                    "Needed for groups on the threadiverse, which only accept reports from group members. The group's moderators will see that you reported it."
+                  )}</span>
+              </div>
+            </label>
+          </div>
+      {/case}
     </div>
 
     <:open_btn>

@@ -10,7 +10,8 @@ defmodule Bonfire.Social.Flags.LiveHandler do
              current_user,
              id,
              comment: params["comment"],
-             forward: params["forward"] == "true"
+             forward: params["forward"] == "true",
+             forward_to_group: params["forward_to_group"] == "true"
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
 
