@@ -59,7 +59,7 @@ defmodule Bonfire.Social.Flags.LiveHandler do
            maybe_apply(
              Bonfire.Classify.Categories,
              :remove_post_from_group,
-             [current_user, context, id],
+             [current_user, context, id, [apply_now: Types.maybe_to_boolean(attrs["apply_now"])]],
              fallback_return: {:error, :not_found}
            ),
          _ <- Bonfire.Social.Flags.unflag(subject, id) do
