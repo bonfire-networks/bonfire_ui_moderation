@@ -115,6 +115,34 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     |> refute_has("article", text: content)
   end
 
+  # what was flagged is shown to moderators only: the flags list of someone who isn't one keeps to the boundaries, so a post they can't read isn't there
+  test "my flags list leaves out a post I can't read", %{conn: conn, me: me, carl: carl} do
+    readable = "a post anyone here may read"
+    hidden = "a post only its mentions may read"
+
+    assert {:ok, readable_post} =
+             Posts.publish(
+               current_user: carl,
+               post_attrs: %{post_content: %{html_body: readable}},
+               boundary: "local"
+             )
+
+    assert {:ok, hidden_post} =
+             Posts.publish(
+               current_user: carl,
+               post_attrs: %{post_content: %{html_body: hidden}},
+               boundary: "mentions"
+             )
+
+    {:ok, _} = Bonfire.Social.Flags.flag(me, readable_post.id)
+    {:ok, _} = Bonfire.Social.Flags.flag(me, hidden_post.id)
+
+    conn
+    |> visit("/settings/user/flags")
+    |> assert_has("article", text: readable)
+    |> refute_has("article", text: hidden)
+  end
+
   test "Unflag a user works", %{conn: conn, me: me, account: account, alice: alice} do
     # Flag a user
     {:ok, flag} = Bonfire.Social.Flags.flag(me, alice.id)

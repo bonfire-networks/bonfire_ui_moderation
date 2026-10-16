@@ -97,6 +97,31 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       |> assert_has("[data-id=feed] article", text: "flagged")
     end
 
+    test "flags on a post (which admin does not explicitly have permission to see) in the instance's flags list" do
+      alice_account = fake_account!()
+      alice = fake_admin!(alice_account)
+      bob = fake_user!()
+
+      assert {:ok, post} =
+               Posts.publish(
+                 current_user: bob,
+                 post_attrs: %{post_content: %{html_body: "epic html post"}},
+                 boundary: "mentions"
+               )
+
+      flagger = fake_user!()
+      {:ok, _} = Flags.flag(flagger, post)
+
+      conn(user: alice, account: alice_account)
+      |> visit("/settings/instance/flags")
+      |> wait_async()
+      |> within("#flags_list", fn session ->
+        session
+        |> assert_has_or_open_browser("article", text: "epic html post")
+        |> refute_has("[data-role=restricted_content]")
+      end)
+    end
+
     test "non-admin user does not receive flag notifications" do
       # Create non-admin user
       carl_account = fake_account!()
