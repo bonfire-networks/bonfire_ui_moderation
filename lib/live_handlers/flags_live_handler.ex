@@ -28,14 +28,18 @@ defmodule Bonfire.Social.Flags.LiveHandler do
   def handle_event("unflag", %{"id" => id} = attrs, socket) do
     current_user = current_user_required!(socket)
 
+    # whose report: who may remove it is for `Flags.unflag/3` to say, from where the post is, not from a `context` the client names
     subject =
-      if(
-        attrs["subject"] &&
-          Bonfire.Boundaries.can?(assigns(socket)[:__context__], :mediate, attrs["context"]),
-        do: Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> from_ok()
-      ) || current_user
+      (attrs["subject"] &&
+         Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> from_ok()) ||
+        current_user
 
-    with _ <- Bonfire.Social.Flags.unflag(subject, id) do
+    with {:ok, _} <-
+           Bonfire.Social.Flags.unflag(subject, id,
+             current_user: current_user,
+             context: attrs["context"]
+           )
+           |> ok_unless_error() do
       {:noreply,
        socket
        |> assign_flash(:info, l("Unflagged!"))
@@ -48,21 +52,21 @@ defmodule Bonfire.Social.Flags.LiveHandler do
     current_user = current_user_required!(socket)
 
     subject =
-      if(
-        attrs["subject"] &&
-          Bonfire.Boundaries.can?(assigns(socket)[:__context__], :mediate, context),
-        do: Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> from_ok()
-      ) || current_user
+      (attrs["subject"] &&
+         Bonfire.Me.Users.by_id(attrs["subject"], current_user: current_user) |> from_ok()) ||
+        current_user
 
-    # the context checks the caller moderates the group: the button is only shown to moderators, but anyone can send this event
+    # the report first, while the post is still in the group, which is what lets its moderator dismiss it (`Flags.unflag/3`); then the removal, which checks the caller moderates the group: the button is only shown to moderators, but anyone can send this event
     with {:ok, _} <-
+           Bonfire.Social.Flags.unflag(subject, id, current_user: current_user, context: context)
+           |> ok_unless_error(),
+         {:ok, _} <-
            maybe_apply(
              Bonfire.Classify.Categories,
              :remove_post_from_group,
              [current_user, context, id, [apply_now: Types.maybe_to_boolean(attrs["apply_now"])]],
              fallback_return: {:error, :not_found}
-           ),
-         _ <- Bonfire.Social.Flags.unflag(subject, id) do
+           ) do
       {:noreply,
        socket
        |> assign_flash(:info, l("Unpublished!"))
@@ -70,4 +74,8 @@ defmodule Bonfire.Social.Flags.LiveHandler do
        |> Bonfire.UI.Social.ActivityLive.remove()}
     end
   end
+
+  # what removing a report returns varies (deleted counts, `nil`), and only a refusal matters here, which the `with` turns into a flash
+  defp ok_unless_error({:error, _} = refused), do: refused
+  defp ok_unless_error(removed), do: {:ok, removed}
 end
