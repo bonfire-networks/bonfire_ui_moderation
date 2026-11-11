@@ -122,7 +122,7 @@
         <StatelessComponent
           module={maybe_component(Bonfire.UI.Boundaries.BlockButtonLive, @__context__)}
           parent_id={deterministic_dom_id(__MODULE__, id(@activity_component_id || @activity), "flagged-hide", nil)}
-          object={id(@object)}
+          object={@object}
           label={l("this %{object}", object: e(@object_type_readable, l("object")))}
           scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
           type={:hide}
@@ -170,6 +170,9 @@
       object={flagged_subject(@object || @activity)}
       peered={e(flagged_subject(@object || @activity), :peered, nil)}
       scope={e(@activity, :tree, :parent, nil) || e(@activity, :tree, :parent_id, nil)}
+      block_btn_label={l("Block or unblock %{user_or_instance_name}",
+        user_or_instance_name: e(flagged_subject(@object || @activity), :profile, :name, l("this user"))
+      )}
       with_icon
     />
 

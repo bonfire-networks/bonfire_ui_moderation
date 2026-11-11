@@ -219,6 +219,45 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
     |> assert_has("button", text: "Take action")
   end
 
+  test "Take action menu says 'Block or unblock' for a flagged user who is blocked instance-wide",
+       %{
+         alice: alice,
+         bob: bob
+       } do
+    admin_account = fake_account!()
+    admin = fake_admin!(admin_account)
+
+    content = "post by a blocked user"
+    attrs = %{post_content: %{html_body: content}}
+    assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
+    {:ok, _flag} = Bonfire.Social.Flags.flag(bob, post.id)
+
+    assert {:ok, _} = Bonfire.Boundaries.Blocks.block(alice, :block, scope: :instance_wide)
+
+    conn(user: admin, account: admin_account)
+    |> visit("/settings/instance/flags")
+    |> assert_has("article", text: content)
+    |> assert_has("[data-role=block_modal]", text: "Block or unblock #{alice.profile.name}")
+  end
+
+  test "Take action menu says 'Block or unblock' for a flagged user who is not blocked", %{
+    alice: alice,
+    bob: bob
+  } do
+    admin_account = fake_account!()
+    admin = fake_admin!(admin_account)
+
+    content = "post by an unblocked user"
+    attrs = %{post_content: %{html_body: content}}
+    assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
+    {:ok, _flag} = Bonfire.Social.Flags.flag(bob, post.id)
+
+    conn(user: admin, account: admin_account)
+    |> visit("/settings/instance/flags")
+    |> assert_has("article", text: content)
+    |> assert_has("[data-role=block_modal]", text: "Block or unblock #{alice.profile.name}")
+  end
+
   # can add once we implement custom roles
   # NOTE: we do have `Bonfire.Boundaries.can?(context, :mediate, :instance)`
   # test "If I have the right instance permission, as a user I want to see and act upon the flags feed in admin settings" do
