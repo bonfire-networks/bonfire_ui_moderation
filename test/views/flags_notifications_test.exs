@@ -9,7 +9,7 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
   describe "show" do
     test "flags on a user (which admin has permission to see) in admin's notifications" do
       some_account = fake_account!()
-      {:ok, someone} = Users.make_admin(fake_user!(some_account))
+      {:ok, someone} = Users.make_admin(fake_user!(some_account), skip_boundary_check: true)
       poster = fake_user!()
 
       # Create a post
@@ -30,7 +30,7 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
 
     test "flags on a post (which admin has permission to see) in admin's notifications" do
       some_account = fake_account!()
-      {:ok, someone} = Users.make_admin(fake_user!(some_account))
+      {:ok, someone} = Users.make_admin(fake_user!(some_account), skip_boundary_check: true)
       poster = fake_user!()
 
       # Create a post
@@ -53,7 +53,7 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
 
     test "flags on a post (which admin has permission to see) in admin's notifications has subject of the object flagged preloaded" do
       some_account = fake_account!()
-      {:ok, someone} = Users.make_admin(fake_user!(some_account))
+      {:ok, someone} = Users.make_admin(fake_user!(some_account), skip_boundary_check: true)
       poster = fake_user!()
 
       # Create a post
@@ -78,14 +78,16 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       alice = fake_admin!(alice_account)
       bob = fake_user!()
 
+      # only someone who can read a post may flag it, so the flagger is mentioned (and may read it) while the admin is not
+      flagger = fake_user!()
+
       # Create a post with limited visibility
-      attrs = %{post_content: %{html_body: "epic html post"}}
+      attrs = %{post_content: %{html_body: "@#{flagger.character.username} epic html post"}}
 
       assert {:ok, post} =
                Posts.publish(current_user: bob, post_attrs: attrs, boundary: "mentions")
 
       # Flag the post
-      flagger = fake_user!()
       {:ok, post} = Flags.flag(flagger, post)
 
       # Check notifications
@@ -102,14 +104,18 @@ defmodule Bonfire.UI.Moderation.Notifications.Flag.Test do
       alice = fake_admin!(alice_account)
       bob = fake_user!()
 
+      # only someone who can read a post may flag it, so the flagger is mentioned (and may read it) while the admin is not
+      flagger = fake_user!()
+
       assert {:ok, post} =
                Posts.publish(
                  current_user: bob,
-                 post_attrs: %{post_content: %{html_body: "epic html post"}},
+                 post_attrs: %{
+                   post_content: %{html_body: "@#{flagger.character.username} epic html post"}
+                 },
                  boundary: "mentions"
                )
 
-      flagger = fake_user!()
       {:ok, _} = Flags.flag(flagger, post)
 
       conn(user: alice, account: alice_account)

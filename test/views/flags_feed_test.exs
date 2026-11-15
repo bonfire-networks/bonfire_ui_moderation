@@ -146,7 +146,7 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
   test "As an admin, When a user flags an activity with a comment, I want to see the activity and comment in flags feed in admin settings",
        %{conn: conn, me: me, account: account, alice: alice, bob: bob} do
     # Make myself an admin
-    {:ok, me} = Bonfire.Me.Users.make_admin(me)
+    {:ok, me} = Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
 
     # Alice creates a post
     content = "here is an epic html post"
@@ -166,7 +166,7 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
   test "As an admin, When a user flags another user I want to see the user flagged in flags feed in admin settings",
        %{conn: conn, me: me, account: account, alice: alice, bob: bob} do
     # Make myself an admin
-    {:ok, me} = Bonfire.Me.Users.make_admin(me)
+    {:ok, me} = Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
 
     # Bob flags Alice
     {:ok, flag} = Bonfire.Social.Flags.flag(bob, alice.id)
@@ -232,7 +232,11 @@ defmodule Bonfire.UI.Moderation.FlagsFeedTest do
     assert {:ok, post} = Posts.publish(current_user: alice, post_attrs: attrs, boundary: "local")
     {:ok, _flag} = Bonfire.Social.Flags.flag(bob, post.id)
 
-    assert {:ok, _} = Bonfire.Boundaries.Blocks.block(alice, :block, scope: :instance_wide)
+    assert {:ok, _} =
+             Bonfire.Boundaries.Blocks.block(alice, :block,
+               scope: :instance_wide,
+               skip_boundary_check: true
+             )
 
     conn(user: admin, account: admin_account)
     |> visit("/settings/instance/flags")

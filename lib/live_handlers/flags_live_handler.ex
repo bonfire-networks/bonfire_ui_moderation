@@ -1,6 +1,9 @@
 defmodule Bonfire.Social.Flags.LiveHandler do
   use Bonfire.UI.Common.Web, :live_handler
 
+  # a guest is sent to the remote interaction flow by the handler itself
+  @guest_allowed_events ~w(flag)
+
   # flag in LV
   def handle_event("flag", %{"object_id" => id} = params, socket) do
     # debug(socket)
@@ -21,6 +24,12 @@ defmodule Bonfire.Social.Flags.LiveHandler do
         |> assign_flash(:info, l("%{user_or_thing} flagged!", user_or_thing: params["type"]))
         |> assign(flagged: Map.get(assigns(socket), :flagged, []) ++ [{id, true}])
       }
+    else
+      {:error, _} ->
+        {:noreply, assign_error(socket, l("Sorry, you cannot flag this"))}
+
+      other ->
+        other
     end
   end
 
