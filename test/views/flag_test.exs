@@ -135,7 +135,9 @@ defmodule Bonfire.UI.Moderation.FlagTest do
              )
 
     {:ok, _} = Bonfire.Social.Flags.flag(me, readable_post.id)
-    {:ok, _} = Bonfire.Social.Flags.flag(me, hidden_post.id)
+
+    # flagging needs read access, so a flag on a post I can't read comes from elsewhere (an incoming report, automod, or a post that became private after I flagged it)
+    {:ok, _} = Bonfire.Social.Flags.flag(me, hidden_post, skip_boundary_check: true)
 
     conn
     |> visit("/settings/user/flags")
