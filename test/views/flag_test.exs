@@ -35,6 +35,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     |> visit("/feed/local")
     |> within("[data-object_id='#{post.id}']", fn session ->
       session
+      |> open_more_menu()
       |> click_button("[data-role=open_modal]", "Flag this post")
     end)
     |> fill_in("Add a comment for the flag", with: "test")
@@ -59,6 +60,7 @@ defmodule Bonfire.UI.Moderation.FlagTest do
     |> assert_has("[data-object_id='#{post.id}']", text: content)
     |> within("[data-object_id='#{post.id}']", fn session ->
       session
+      |> open_more_menu()
       |> click_button("[data-role=open_modal]", "Flag this post")
     end)
     |> assert_has("button", text: "Already flagged")
@@ -76,9 +78,14 @@ defmodule Bonfire.UI.Moderation.FlagTest do
       conn
       |> visit("/feed/local")
       |> assert_has("article", text: content)
-      # |> click_button("[data-role=open_modal]", "Flag this post")
-      |> assert_has_or_open_browser("[data-role=open_modal]", text: "Flag #{carl.profile.name}")
-      |> click_button("[data-role=open_modal]", "Flag #{carl.profile.name}")
+      |> within("[data-object_id='#{post.id}']", fn session ->
+        session
+        |> open_more_menu()
+        |> assert_has_or_open_browser("[data-role=open_modal]",
+          text: "Flag #{carl.profile.name}"
+        )
+        |> click_button("[data-role=open_modal]", "Flag #{carl.profile.name}")
+      end)
       |> fill_in("Add a comment for the flag", with: "test")
       # |> click_button("button[data-role=submit_flag]", "Flag this post")
       |> click_button("button[data-role=submit_flag]", "Flag #{carl.profile.name}")
